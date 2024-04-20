@@ -3,7 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing"
 import { FILES_DEST } from "@src/app.controller";
 import { AppModule } from "@src/app.module";
 import { PrismaService } from "@src/prisma.service";
-import fs from 'fs';
+import * as fs from 'fs'
 import * as request from "supertest";
 
 describe('VideoController (e2e)', () => {
@@ -34,8 +34,7 @@ describe('VideoController (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
-    // FIXME: remove files after tests
-    // fs.rmSync(FILES_DEST, { recursive: true, force: true });
+    fs.rmSync(FILES_DEST, { recursive: true, force: true });
   })
 
   describe('POST /video', () => {
