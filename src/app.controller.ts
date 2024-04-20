@@ -15,14 +15,12 @@ import { diskStorage } from 'multer';
 import { randomUUID } from 'crypto';
 import { extname } from 'path';
 import { PrismaService } from './prisma.service';
-import { AppService } from './app.service';
 
 export const FILES_DEST = "./uploads";
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
     private readonly prismaService: PrismaService,
   ) {}
 
