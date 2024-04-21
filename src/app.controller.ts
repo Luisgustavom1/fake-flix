@@ -3,18 +3,24 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
+  NotFoundException,
+  Param,
   Post,
   Req,
+  Res,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'crypto';
-import { extname } from 'path';
+import * as path from 'path';
+import * as fs from 'fs'
 import { PrismaService } from './prisma.service';
+import type { Request, Response } from 'express';
 
 export const FILES_DEST = "./uploads";
 
@@ -44,7 +50,7 @@ export class AppController {
           filename: (_req, file, cb) => {
             return cb(
               null,
-              `${Date.now()}-${randomUUID()}-${extname(file.originalname)}`,
+              `${Date.now()}-${randomUUID()}-${path.extname(file.originalname)}`,
             );
           },
         }),
@@ -84,5 +90,49 @@ export class AppController {
         duration: 100,
       }
     });
+  }
+
+  @Get('/stream/:videoId')
+  @Header('Content-Type', 'video/mp4')
+  async streamVideo(
+    @Param('videoId') videoId: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const video = await this.prismaService.video.findUnique({
+      where: {
+        id: videoId,
+      }
+    })
+
+    if (!video) throw new NotFoundException('Video not found');
+
+    const videoPath = path.join('.', video.url);
+    const fileSize = fs.statSync(videoPath).size;
+
+    const range = req.headers.range;
+
+    if (range) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10): fileSize - 1;
+
+      const chunkSize = end - start + 1;
+      const file = fs.createReadStream(videoPath, { start, end })
+
+      res.writeHead(HttpStatus.PARTIAL_CONTENT, {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunkSize,
+        'Content-Type': 'video/mp4',
+      })
+
+      return file.pipe(res);
+    }
+
+    res.writeHead(HttpStatus.OK, {
+      'Content-Length': fileSize,
+      'Content-Type': 'video/mp4',
+    })
   }
 }
