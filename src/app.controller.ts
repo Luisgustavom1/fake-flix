@@ -18,8 +18,9 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
-import * as fs from 'fs'
-import { PrismaService } from './prisma.service';
+import * as fs from 'fs';
+import { PrismaService } from '@src/prisma.service';
+import { AppService } from './app.service';
 import type { Request, Response } from 'express';
 
 export const FILES_DEST = "./uploads";
@@ -27,12 +28,13 @@ export const FILES_DEST = "./uploads";
 @Controller()
 export class AppController {
   constructor(
+    private readonly appService: AppService,
     private readonly prismaService: PrismaService,
   ) {}
 
-  @Get("/")
-  getHello() {
-    return 'Hello World!';
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
   }
 
   @Post('video')
@@ -66,7 +68,7 @@ export class AppController {
   async uploadVideo(
     @Req() _req: Request,
     @UploadedFiles()
-    files: {
+    files: { 
       thumbnail?: Express.Multer.File[];
       video?: Express.Multer.File[];
     },
@@ -88,7 +90,7 @@ export class AppController {
         thumbnailUrl: thumbnailFile.path,
         sizeInKb: videoFile.size,
         duration: 100,
-      }
+      },
     });
   }
 
@@ -109,7 +111,7 @@ export class AppController {
 
     const videoPath = path.join('.', video.url);
     const fileSize = fs.statSync(videoPath).size;
-
+    
     const range = req.headers.range;
     if (range) {
       const parts = range.replace(/bytes=/, '').split('-');

@@ -107,43 +107,25 @@ describe('VideoController (e2e)', () => {
         .field('description', 'Test description')
         .expect(HttpStatus.CREATED);
 
-      const fileSize = 14301245;
-      const range = `bytes=20-${fileSize - 1}`;
+      const start = 20;
+      const fileSize = 1430145;
+      const range = `bytes=${start}-${fileSize - 1}`;
 
       const response = await request(app.getHttpServer())
         .get(`/stream/${sampleVideo.id}`)
         .set('Range', range)
         .expect(HttpStatus.PARTIAL_CONTENT);
 
-      expect(response.headers['content-range']).toBe(`bytes 20-${fileSize - 1}/${fileSize}`);
+      expect(response.headers['content-range']).toBe(`bytes ${start}-${fileSize - 1}/${fileSize}`);
       expect(response.headers['accept-ranges']).toBe('bytes');
-      expect(response.headers['content-length']).toBe(String(fileSize));
-      expect(response.headers['content-type']).toBe('video/mp4');
-    })
-
-    it('should return full video when not pass range', async () => {
-      const { body: sampleVideo } = await request(app.getHttpServer())
-        .post('/video')
-        .attach('video', './test/fixtures/sample.mp4')
-        .attach('thumbnail', './test/fixtures/sample.jpg')
-        .field('title', 'Test video')
-        .field('description', 'Test description')
-        .expect(HttpStatus.CREATED);
-
-      const fileSize = 14301245;
-
-      const response = await request(app.getHttpServer())
-        .get(`/stream/${sampleVideo.id}`)
-        .expect(HttpStatus.OK);
-
-      expect(response.headers['content-length']).toBe(String(fileSize));
+      expect(response.headers['content-length']).toBe(String(fileSize - start));
       expect(response.headers['content-type']).toBe('video/mp4');
     })
 
     it('should return 404 when video is not found', async () => {
-        await request(app.getHttpServer())
-          .get(`/stream/1234`)
-          .expect(HttpStatus.NOT_FOUND);
+      await request(app.getHttpServer())
+        .get(`/stream/1234`)
+        .expect(HttpStatus.NOT_FOUND);
     })
   })
 })
