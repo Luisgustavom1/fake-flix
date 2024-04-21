@@ -92,7 +92,7 @@ export class AppController {
     });
   }
 
-  @Get('/stream/:videoId')
+  @Get('stream/:videoId')
   @Header('Content-Type', 'video/mp4')
   async streamVideo(
     @Param('videoId') videoId: string,
@@ -111,12 +111,10 @@ export class AppController {
     const fileSize = fs.statSync(videoPath).size;
 
     const range = req.headers.range;
-
     if (range) {
       const parts = range.replace(/bytes=/, '').split('-');
       const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10): fileSize - 1;
-
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
       const chunkSize = end - start + 1;
       const file = fs.createReadStream(videoPath, { start, end })
 
@@ -133,6 +131,6 @@ export class AppController {
     res.writeHead(HttpStatus.OK, {
       'Content-Length': fileSize,
       'Content-Type': 'video/mp4',
-    })
+    });
   }
 }
