@@ -1,5 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { VideoDAO } from '../dao/video.dao.interface';
+import { Injectable } from '@nestjs/common';
+import { ContentRepository } from '@src/persistence/repository/content.repository';
+import { ContentEntity, ContentType } from '../entity/content.entity';
+import { MovieEntity } from '../entity/movie.entity';
+import { VideoEntity } from '../entity/video.entity';
+import { ThumbnailEntity } from '../entity/thumbnail.entity';
 
 export interface CreateContentData {
   title: string;
@@ -11,10 +15,29 @@ export interface CreateContentData {
 
 @Injectable()
 export class ContentManagementService {
-  constructor(@Inject(VideoDAO) private readonly videoDao: VideoDAO) {}
+  constructor(private readonly contentRepository: ContentRepository) {}
 
   async createContent(data: CreateContentData) {
-    const createdVideo = await this.videoDao.create(data);
-    return createdVideo;
+    const video = VideoEntity.createNew({
+      url: data.url,
+      sizeInKb: data.sizeInKb,
+      duration: 100,
+    });
+    const thumbnail = ThumbnailEntity.createNew({
+      url: data.thumbnailUrl,
+    });
+    const media = MovieEntity.createNew({
+      video,
+      thumbnail,
+    });
+    const content = ContentEntity.createNew({
+      title: data.title,
+      description: data.description,
+      type: ContentType.MOVIE,
+      media,
+    });
+
+    await this.contentRepository.create(content);
+    return content;
   }
 }

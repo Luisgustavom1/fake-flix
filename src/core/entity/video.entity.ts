@@ -8,7 +8,7 @@ export type NewVideoEntity = Omit<
 
 export interface VideoEntityProps extends BaseEntityProps {
   url: string;
-  sizeInKb: string;
+  sizeInKb: number;
   duration: number;
 }
 

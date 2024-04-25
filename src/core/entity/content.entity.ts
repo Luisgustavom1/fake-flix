@@ -9,10 +9,10 @@ export interface ContentEntityProps extends BaseEntityProps {
   description: string;
 }
 
-export const ContentType: { [x: string]: 'MOVIE' | 'TV_SHOW' } = {
+export const ContentType = {
   MOVIE: 'MOVIE',
   TV_SHOW: 'TV_SHOW',
-};
+} as const;
 
 export type ContentType = (typeof ContentType)[keyof typeof ContentType];
 

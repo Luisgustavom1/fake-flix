@@ -29,7 +29,6 @@ export class RestResponseInterceptor<T extends object>
             excludeExtraneousValues: true,
           },
         );
-        console.log('transformedData', transformedData);
         const errors = await validate(transformedData);
 
         if (errors.length)
