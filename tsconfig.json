@@ -23,8 +23,9 @@
     "checkJs": false,
     "paths": {
       "@src/*": ["src/*"],
-      "@resource/*": ["resource/*"]
-    },
+      "@resource/*": ["resource/*"],
+      "@prisma/*": ["prisma/*"]
+    }
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/**/*"]
 }
