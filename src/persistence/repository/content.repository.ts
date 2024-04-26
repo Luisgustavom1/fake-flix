@@ -158,4 +158,12 @@ export class ContentRepository {
   protected handleAndThrowError(error: unknown): void {
     throw new Error(this.extractErrorMessage(error));
   }
+
+  async clear() {
+    try {
+      return this.model.deleteMany();
+    } catch (e) {
+      this.handleAndThrowError(e);
+    }
+  }
 }
