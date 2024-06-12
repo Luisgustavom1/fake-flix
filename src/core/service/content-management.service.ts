@@ -4,6 +4,7 @@ import { ContentEntity, ContentType } from '../entity/content.entity';
 import { MovieEntity } from '../entity/movie.entity';
 import { VideoEntity } from '../entity/video.entity';
 import { ThumbnailEntity } from '../entity/thumbnail.entity';
+import { ConfigService } from '@src/infra/module/config/service/config.service';
 
 export interface CreateContentData {
   title: string;
@@ -15,7 +16,10 @@ export interface CreateContentData {
 
 @Injectable()
 export class ContentManagementService {
-  constructor(private readonly contentRepository: ContentRepository) {}
+  constructor(
+    private readonly contentRepository: ContentRepository,
+    private readonly config: ConfigService,
+  ) {}
 
   async createContent(data: CreateContentData) {
     const video = VideoEntity.createNew({
