@@ -31,6 +31,8 @@
     "prisma": "^5.12.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "typeorm": "^0.3.20",
+    "typeorm-extension": "^3.5.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -74,8 +76,5 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  },
-  "prisma": {
-    "schema": "database/schema.prisma"
   }
 }
