@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ContentController } from './http/rest/controller/content.controller';
+import { VideoUploadController } from './http/rest/controller/video-upload.controller';
 import { ContentManagementService } from './core/service/content-management.service';
 import { MediaPlayerService } from './core/service/media-player.service';
 import { ContentRepository } from './persistence/repository/content.repository';
@@ -9,7 +9,7 @@ import { PersistenceModule } from './persistence/persistence.module';
 
 @Module({
   imports: [PersistenceModule.forRoot()],
-  controllers: [ContentController, MediaPlayerController],
+  controllers: [VideoUploadController, MediaPlayerController],
   providers: [
     ContentManagementService,
     MediaPlayerService,

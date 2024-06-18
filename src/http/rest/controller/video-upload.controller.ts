@@ -15,17 +15,17 @@ import { randomUUID } from 'crypto';
 import * as path from 'path';
 import type { Request } from 'express';
 import { ContentManagementService } from '@src/core/service/content-management.service';
-import { MediaPlayerService } from '@src/core/service/media-player.service';
 import { RestResponseInterceptor } from '../interceptor/rest-response.interceptor';
 import { CreateVideoResponseDTO } from '../dto/response/create-video-response-dto';
 
 export const FILES_DEST = './uploads';
+const MAX_THUMBNAIL_SIZE = 1024 * 1024 * 10; // 10MB
+const MAX_VIDEO_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
 
 @Controller()
-export class ContentController {
+export class VideoUploadController {
   constructor(
     private readonly contentManagementService: ContentManagementService,
-    private readonly mediaPlayerService: MediaPlayerService,
   ) {}
 
   @Post('video')
@@ -73,7 +73,15 @@ export class ContentController {
       throw new BadRequestException('Video and thumbnail are required');
     }
 
-    const newContent = await this.contentManagementService.createContent({
+    if (videoFile.size > MAX_VIDEO_FILE_SIZE) {
+      throw new BadRequestException('Video file is too large');
+    }
+
+    if (thumbnailFile.size > MAX_THUMBNAIL_SIZE) {
+      throw new BadRequestException('Thumbnail file is too large');
+    }
+
+    const newContent = await this.contentManagementService.createMovie({
       title: body.title,
       description: body.description,
       url: videoFile.path,
@@ -81,18 +89,16 @@ export class ContentController {
       sizeInKb: videoFile.size,
     });
 
-    const video = newContent.getMedia()?.getVideo();
-    if (!video) {
-      throw new BadRequestException('Video must be present');
-    }
-
     return {
-      id: video.getId(),
-      title: newContent.getTitle(),
-      description: newContent.getDescription(),
-      url: video.getUrl(),
-      createdAt: newContent.getCreatedAt(),
-      updatedAt: newContent.getUpdatedAt(),
+      id: newContent.id,
+      title: newContent.title,
+      description: newContent.description,
+      url: newContent.movie.video.url,
+      thumbnailUrl: newContent.movie.thumbnail?.url,
+      sizeInKb: newContent.movie.video.sizeInKb,
+      duration: newContent.movie.video.duration,
+      createdAt: newContent.createdAt,
+      updatedAt: newContent.updatedAt,
     };
   }
 }

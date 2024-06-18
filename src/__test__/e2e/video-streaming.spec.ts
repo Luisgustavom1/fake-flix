@@ -1,16 +1,20 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { FILES_DEST } from '@src/http/rest/controller/content.controller';
+import { FILES_DEST } from '@src/http/rest/controller/video-upload.controller';
 import { AppModule } from '@src/app.module';
 import * as fs from 'fs';
 import * as request from 'supertest';
 import { VideoRepository } from '@src/persistence/repository/video.repository';
 import { ContentManagementService } from '@src/core/service/content-management.service';
+import { MovieRepository } from '@src/persistence/repository/movie.repository';
+import { ContentRepository } from '@src/persistence/repository/content.repository';
 
 describe('VideoController (e2e)', () => {
   let module: TestingModule;
   let app: INestApplication;
   let videoRepository: VideoRepository;
+  let movieRepository: MovieRepository;
+  let contentRepository: ContentRepository;
   let contentManagementService: ContentManagementService;
 
   beforeAll(async () => {
@@ -21,10 +25,12 @@ describe('VideoController (e2e)', () => {
     app = module.createNestApplication();
     await app.init();
 
-    videoRepository = module.get<VideoRepository>(VideoRepository);
     contentManagementService = module.get<ContentManagementService>(
       ContentManagementService,
     );
+    videoRepository = module.get<VideoRepository>(VideoRepository);
+    movieRepository = module.get<MovieRepository>(MovieRepository);
+    contentRepository = module.get<ContentRepository>(ContentRepository);
   });
 
   beforeEach(async () => {
@@ -35,6 +41,8 @@ describe('VideoController (e2e)', () => {
 
   afterEach(async () => {
     await videoRepository.clear();
+    await movieRepository.clear();
+    await contentRepository.clear()
   });
 
   afterAll(async () => {
@@ -44,7 +52,7 @@ describe('VideoController (e2e)', () => {
 
   describe('/stream/:videoId', () => {
     it('should streams video', async () => {
-      const sampleVideo = await contentManagementService.createContent({
+      const sampleVideo = await contentManagementService.createMovie({
         title: 'Sample video',
         description: 'Sample description',
         url: './test/fixtures/sample.mp4',
@@ -56,9 +64,8 @@ describe('VideoController (e2e)', () => {
       const fileSize = 1430145;
       const range = `bytes=${start}-${fileSize - 1}`;
 
-      const video = sampleVideo.getMedia().getVideo();
       const response = await request(app.getHttpServer())
-        .get(`/stream/${video.getId()}`)
+        .get(`/stream/${sampleVideo.movie.video.id}`)
         .set('Range', range)
         .expect(HttpStatus.PARTIAL_CONTENT);
 
