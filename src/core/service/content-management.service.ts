@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ContentRepository } from '@src/persistence/repository/content.repository';
-import { ContentEntity, ContentType } from '../entity/content.entity';
+import { ContentEntity } from '../entity/content.entity';
 import { MovieEntity } from '../entity/movie.entity';
 import { VideoEntity } from '../entity/video.entity';
 import { ThumbnailEntity } from '../entity/thumbnail.entity';
-import { ConfigService } from '@src/infra/module/config/service/config.service';
+import { ContentType } from '../entity/content-type.enum';
 
 export interface CreateContentData {
   title: string;
@@ -18,7 +18,6 @@ export interface CreateContentData {
 export class ContentManagementService {
   constructor(
     private readonly contentRepository: ContentRepository,
-    private readonly config: ConfigService,
   ) {}
 
   async createContent(data: CreateContentData) {
