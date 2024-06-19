@@ -4,10 +4,12 @@ import { FILES_DEST } from '@src/http/rest/controller/video-upload.controller';
 import { AppModule } from '@src/app.module';
 import * as fs from 'fs';
 import * as request from 'supertest';
+import * as nock from 'nock';
 import { VideoRepository } from '@src/persistence/repository/video.repository';
 import { ContentManagementService } from '@src/core/service/content-management.service';
 import { MovieRepository } from '@src/persistence/repository/movie.repository';
 import { ContentRepository } from '@src/persistence/repository/content.repository';
+import { searchKeyword, searchMovie } from '../../../test/utils/http/rest/client/external-movie-rating';
 
 describe('VideoController (e2e)', () => {
   let module: TestingModule;
@@ -42,7 +44,8 @@ describe('VideoController (e2e)', () => {
   afterEach(async () => {
     await videoRepository.clear();
     await movieRepository.clear();
-    await contentRepository.clear()
+    await contentRepository.clear();
+    nock.cleanAll();
   });
 
   afterAll(async () => {
@@ -52,6 +55,22 @@ describe('VideoController (e2e)', () => {
 
   describe('/stream/:videoId', () => {
     it('should streams video', async () => {
+      searchKeyword('Sample video').reply(200, {
+        results: [
+          {
+            id: '1',
+          },
+        ],
+      });
+
+      searchMovie().reply(200, {
+        results: [
+          {
+            vote_average: 8.5,
+          }
+        ]}
+      );
+
       const sampleVideo = await contentManagementService.createMovie({
         title: 'Sample video',
         description: 'Sample description',

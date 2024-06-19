@@ -7,6 +7,8 @@ import * as request from 'supertest';
 import { VideoRepository } from '@src/persistence/repository/video.repository';
 import { ContentRepository } from '@src/persistence/repository/content.repository';
 import { MovieRepository } from '@src/persistence/repository/movie.repository';
+import * as nock from 'nock';
+import { searchKeyword, searchMovie } from '../../../test/utils/http/rest/client/external-movie-rating';
 
 describe('VideoUploadController (e2e)', () => {
   let module: TestingModule;
@@ -38,6 +40,7 @@ describe('VideoUploadController (e2e)', () => {
     await videoRepository.clear();
     await movieRepository.clear();
     await contentRepository.clear();
+    nock.cleanAll();
   });
 
   afterAll(async () => {
@@ -52,6 +55,22 @@ describe('VideoUploadController (e2e)', () => {
         description: 'Test description',
         url: 'uploads/video.mp4',
       };
+
+      searchKeyword(expectedVideo.title).reply(200, {
+        results: [
+          {
+            id: '1',
+          }
+        ]}
+      );
+
+      searchMovie().reply(200, {
+        results: [
+          {
+            vote_average: 8.5,
+          }
+        ]}
+      );
 
       await request(app.getHttpServer())
         .post('/video')
