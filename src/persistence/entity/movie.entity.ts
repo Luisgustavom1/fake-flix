@@ -1,5 +1,5 @@
 import { DefaultEntity } from '@src/infra/module/typeorm/entity/default.entity';
-import { Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { Content } from './content.entity';
 import { Thumbnail } from './thumbnail.entity';
 import { Video } from './video.entity';
@@ -14,6 +14,10 @@ export class Movie extends DefaultEntity<Movie> {
   @OneToOne(() => Content, (content) => content.movie)
   @JoinColumn()
   content: Content
+
+  @Column({ type: 'float', nullable: true })
+  externalRating: number | null;
+
   @OneToOne(() => Thumbnail, {
     cascade: true,
   })
