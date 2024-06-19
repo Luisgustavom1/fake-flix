@@ -14,6 +14,10 @@ export const factory = (): Config => {
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
     },
+    movieDb: {
+      apiToken: process.env.MOVIE_DB_API_TOKEN,
+      url: process.env.MOVIE_DB_URL,
+    },
   });
 
   if (result.success) {
