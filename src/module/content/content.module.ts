@@ -4,7 +4,7 @@ import { MediaPlayerService } from '@contentModule/core/service/media-player.ser
 import { ContentRepository } from '@contentModule/persistence/repository/content.repository';
 import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
 import { PersistenceModule } from '@contentModule/persistence/persistence.module';
-import { HttpClient } from '@contentModule/infra/http/client/http.client';
+import { HttpClient } from '@sharedModule/http/client/http.client';
 import { ConfigModule } from '@sharedModule/config/config.module';
 import { VideoUploadController } from '@contentModule/http/rest/controller/video-upload.controller';
 import { MediaPlayerController } from '@contentModule/http/rest/controller/media-player.controller';
