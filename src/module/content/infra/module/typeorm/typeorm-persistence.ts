@@ -1,13 +1,13 @@
-import { DynamicModule } from "@nestjs/common";
-import { DefaultEntity } from "./entity/default.entity";
-import { ConfigModule } from "../config/config.module";
-import { ConfigService } from "../config/service/config.service";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { TypeOrmMigrationService } from "./service/typeorm-migration.service";
+import { DynamicModule } from '@nestjs/common';
+import { DefaultEntity } from './entity/default.entity';
+import { ConfigModule } from '../../../../shared/module/config/config.module';
+import { ConfigService } from '../../../../shared/module/config/service/config.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmMigrationService } from './service/typeorm-migration.service';
 
 interface ForRootOptions {
   migrations?: string[];
-  entities?: Array<typeof DefaultEntity>
+  entities?: Array<typeof DefaultEntity>;
 }
 
 export class TypeOrmPersistenceModule {
@@ -18,9 +18,7 @@ export class TypeOrmPersistenceModule {
         TypeOrmModule.forRootAsync({
           imports: [ConfigModule.forRoot()],
           inject: [ConfigService],
-          useFactory: async (...args: any[]) => {
-            const configService: ConfigService = args.find(arg => arg instanceof ConfigService);
-
+          useFactory: async (configService: ConfigService) => {
             return {
               type: 'postgres',
               logging: false,
@@ -30,12 +28,12 @@ export class TypeOrmPersistenceModule {
               // types are infered by the compiler and zod
               ...configService.get('database'),
               ...options,
-            }
-          }
-        })
+            };
+          },
+        }),
       ],
       providers: [TypeOrmMigrationService],
-      exports: [TypeOrmMigrationService]
-    }
+      exports: [TypeOrmMigrationService],
+    };
   }
 }

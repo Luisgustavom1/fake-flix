@@ -5,7 +5,7 @@ import { ContentRepository } from '@contentModule/persistence/repository/content
 import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
 import { PersistenceModule } from '@contentModule/persistence/persistence.module';
 import { HttpClient } from '@contentModule/infra/http/client/http.client';
-import { ConfigModule } from '@contentModule/infra/module/config/config.module';
+import { ConfigModule } from '@sharedModule/config/config.module';
 import { VideoUploadController } from '@contentModule/http/rest/controller/video-upload.controller';
 import { MediaPlayerController } from '@contentModule/http/rest/controller/media-player.controller';
 import { ExternalMovieClient } from '@contentModule/http/rest/client/external-movie-rating/external-movie-rating.client';
