@@ -1,4 +1,9 @@
-import { DataSource, EntityTarget, FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityTarget,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { DefaultEntity } from '../entity/default.entity';
 
 export abstract class DefaultTypeOrmRepository<T extends DefaultEntity<T>> {

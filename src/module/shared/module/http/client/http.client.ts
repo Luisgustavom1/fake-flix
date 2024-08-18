@@ -1,5 +1,5 @@
 export class HttpClient {
-  async get<T> (url: string, options: Record<string, any>): Promise<T> {
+  async get<T>(url: string, options: Record<string, any>): Promise<T> {
     const res = await fetch(url, options);
     if (!res.ok) {
       console.log(url);

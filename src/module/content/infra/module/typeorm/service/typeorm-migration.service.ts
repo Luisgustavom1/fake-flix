@@ -1,10 +1,8 @@
-import { InjectDataSource } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 export class TypeOrmMigrationService {
-  constructor(
-    @InjectDataSource() private readonly dataSource: DataSource
-  ) {}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async migrate() {
     const pendingMigrations = await this.dataSource.showMigrations();
