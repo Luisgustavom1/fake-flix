@@ -22,9 +22,10 @@
     "noFallthroughCasesInSwitch": false,
     "checkJs": false,
     "paths": {
+      "@contentModule/*": ["src/module/content/*"],
       "@src/*": ["src/*"],
-      "@resource/*": ["resource/*"],
+      "@resource/*": ["resource/*"]
     }
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/**/*"]
 }
