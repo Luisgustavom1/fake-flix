@@ -1,4 +1,4 @@
-import { DomainException } from './domain.exception';
+import { DomainException } from '@sharedLibs/core/exception/domain.exception';
 
 export class VideoNotFoundException extends DomainException {
   constructor(videoId: string) {

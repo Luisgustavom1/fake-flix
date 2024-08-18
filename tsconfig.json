@@ -23,7 +23,9 @@
     "checkJs": false,
     "paths": {
       "@contentModule/*": ["src/module/content/*"],
+      "@identityModule/*": ["src/module/identity/*"],
       "@sharedModule/*": ["src/module/shared/module/*"],
+      "@sharedLibs/*": ["src/module/shared/*"],
       "@src/*": ["src/*"],
       "@resource/*": ["resource/*"]
     }
