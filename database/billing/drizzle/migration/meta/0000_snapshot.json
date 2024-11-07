@@ -1,5 +1,5 @@
 {
-  "id": "aa281998-9103-492a-9af1-14eb2b25a01d",
+  "id": "87ac10e7-8bec-48ac-930d-351e0c44bdc6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -76,9 +76,7 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "checkConstraints": {}
     },
     "public.Subscription": {
       "name": "Subscription",
@@ -169,9 +167,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "checkConstraints": {}
     }
   },
   "enums": {
@@ -194,8 +190,6 @@
   },
   "schemas": {},
   "sequences": {},
-  "roles": {},
-  "policies": {},
   "views": {},
   "_meta": {
     "columns": {},

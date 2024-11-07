@@ -10,7 +10,7 @@ dependencies:
     version: 4.11.0(graphql@16.9.0)
   '@knaadh/nestjs-drizzle-postgres':
     specifier: ^1.1.0
-    version: 1.1.0(@nestjs/common@10.3.8)(drizzle-orm@0.36.0)(postgres@3.4.5)
+    version: 1.1.0(@nestjs/common@10.3.8)(drizzle-orm@0.35.3)(postgres@3.4.5)
   '@nestjs/apollo':
     specifier: ^12.2.0
     version: 12.2.0(@apollo/server@4.11.0)(@nestjs/common@10.3.8)(@nestjs/core@10.3.8)(@nestjs/graphql@12.2.0)(graphql@16.9.0)
@@ -48,8 +48,8 @@ dependencies:
     specifier: ^0.14.1
     version: 0.14.1
   drizzle-orm:
-    specifier: ^0.36.0
-    version: 0.36.0(@prisma/client@5.13.0)(pg@8.12.0)(postgres@3.4.5)(prisma@5.13.0)
+    specifier: ^0.35.3
+    version: 0.35.3(@libsql/client-wasm@0.14.0)(@prisma/client@5.13.0)(pg@8.13.1)(postgres@3.4.5)(prisma@5.13.0)
   graphql:
     specifier: ^16.9.0
     version: 16.9.0
@@ -57,8 +57,8 @@ dependencies:
     specifier: 1.4.5-lts.1
     version: 1.4.5-lts.1
   pg:
-    specifier: ^8.12.0
-    version: 8.12.0
+    specifier: ^8.13.1
+    version: 8.13.1
   postgres:
     specifier: ^3.4.5
     version: 3.4.5
@@ -73,7 +73,7 @@ dependencies:
     version: 7.8.1
   typeorm:
     specifier: ^0.3.20
-    version: 0.3.20(pg@8.12.0)(ts-node@10.9.2)
+    version: 0.3.20(pg@8.13.1)(ts-node@10.9.2)
   typeorm-extension:
     specifier: ^3.5.1
     version: 3.5.1(typeorm@0.3.20)
@@ -119,8 +119,8 @@ devDependencies:
     specifier: ^16.4.5
     version: 16.4.5
   drizzle-kit:
-    specifier: ^0.27.1
-    version: 0.27.1
+    specifier: ^0.26.2
+    version: 0.26.2
   eslint:
     specifier: ^8.42.0
     version: 8.57.0
@@ -1618,7 +1618,7 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@knaadh/nestjs-drizzle-postgres@1.1.0(@nestjs/common@10.3.8)(drizzle-orm@0.36.0)(postgres@3.4.5):
+  /@knaadh/nestjs-drizzle-postgres@1.1.0(@nestjs/common@10.3.8)(drizzle-orm@0.35.3)(postgres@3.4.5):
     resolution: {integrity: sha512-P3aiXZQjQveOLmpm2WnrzTAh5SZMsRrhOBamZCTTTUjPXBStz7ydOm9yC/eSetT9ba94dCJClbBuX//5vkekdA==}
     peerDependencies:
       '@nestjs/common': '>=9.0.0'
@@ -1626,9 +1626,24 @@ packages:
       postgres: '>=3'
     dependencies:
       '@nestjs/common': 10.3.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      drizzle-orm: 0.36.0(@prisma/client@5.13.0)(pg@8.12.0)(postgres@3.4.5)(prisma@5.13.0)
+      drizzle-orm: 0.35.3(@libsql/client-wasm@0.14.0)(@prisma/client@5.13.0)(pg@8.13.1)(postgres@3.4.5)(prisma@5.13.0)
       postgres: 3.4.5
       tslib: 2.6.3
+    dev: false
+
+  /@libsql/client-wasm@0.14.0:
+    resolution: {integrity: sha512-gB/jtz0xuwrqAHApBv9e9JSew2030Fhj2edyZ83InZ4yPj/Q2LTUlEhaspEYT0T0xsAGqPy38uGrmq/OGS+DdQ==}
+    dependencies:
+      '@libsql/core': 0.14.0
+      js-base64: 3.7.7
+    dev: false
+    bundledDependencies:
+      - '@libsql/libsql-wasm-experimental'
+
+  /@libsql/core@0.14.0:
+    resolution: {integrity: sha512-nhbuXf7GP3PSZgdCY2Ecj8vz187ptHlZQ0VRc751oB2C1W8jQUXKKklvt7t1LJiUTQBVJuadF628eUk+3cRi4Q==}
+    dependencies:
+      js-base64: 3.7.7
     dev: false
 
   /@ljharb/through@2.3.13:
@@ -1950,7 +1965,7 @@ packages:
       '@nestjs/core': 10.3.8(@nestjs/common@10.3.8)(@nestjs/platform-express@10.3.8)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       reflect-metadata: 0.2.2
       rxjs: 7.8.1
-      typeorm: 0.3.20(pg@8.12.0)(ts-node@10.9.2)
+      typeorm: 0.3.20(pg@8.13.1)(ts-node@10.9.2)
       uuid: 9.0.1
     dev: false
 
@@ -3567,8 +3582,8 @@ packages:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
 
-  /drizzle-kit@0.27.1:
-    resolution: {integrity: sha512-4BNA0T2blN+jW5wSwhtc+FIlCMuxYSMWCnYYdOBi5rttwq8aVXRUid0d0NCzcBKtZQSPZGAUxy+TXr7Q1OgEug==}
+  /drizzle-kit@0.26.2:
+    resolution: {integrity: sha512-cMq8omEKywjIy5KcqUo6LvEFxkl8/zYHsgYjFVXjmPWWtuW4blcz+YW9+oIhoaALgs2ebRjzXwsJgN9i6P49Dw==}
     hasBin: true
     dependencies:
       '@drizzle-team/brocli': 0.10.2
@@ -3579,12 +3594,12 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.36.0(@prisma/client@5.13.0)(pg@8.12.0)(postgres@3.4.5)(prisma@5.13.0):
-    resolution: {integrity: sha512-6BETYPdKSR7cDHC0ZfqZk2VrKJ8n/Rfd3ajFPsAbc69gi87nwZ6oBA2wUGMELHA0tQE4kUKN0Ds00LUZQ6Z69A==}
+  /drizzle-orm@0.35.3(@libsql/client-wasm@0.14.0)(@prisma/client@5.13.0)(pg@8.13.1)(postgres@3.4.5)(prisma@5.13.0):
+    resolution: {integrity: sha512-Uv6N+b36x4BaZlxc96e+ag7RnMapBLGhc4SSi2F7RDwqYJipWjaU/P68RUp1FbW9r+mxoDp8nMz2Eece8PJxfA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
-      '@electric-sql/pglite': '>=0.2.0'
+      '@electric-sql/pglite': '>=0.1.1'
       '@libsql/client': '>=0.10.0'
       '@libsql/client-wasm': '>=0.10.0'
       '@neondatabase/serverless': '>=0.1'
@@ -3619,8 +3634,6 @@ packages:
       '@electric-sql/pglite':
         optional: true
       '@libsql/client':
-        optional: true
-      '@libsql/client-wasm':
         optional: true
       '@neondatabase/serverless':
         optional: true
@@ -3671,8 +3684,9 @@ packages:
       sqlite3:
         optional: true
     dependencies:
+      '@libsql/client-wasm': 0.14.0
       '@prisma/client': 5.13.0(prisma@5.13.0)
-      pg: 8.12.0
+      pg: 8.13.1
       postgres: 3.4.5
       prisma: 5.13.0
     dev: false
@@ -5545,6 +5559,10 @@ packages:
     hasBin: true
     dev: false
 
+  /js-base64@3.7.7:
+    resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
+    dev: false
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
     dev: true
@@ -6325,8 +6343,8 @@ packages:
     dev: false
     optional: true
 
-  /pg-connection-string@2.6.4:
-    resolution: {integrity: sha512-v+Z7W/0EO707aNMaAEfiGnGL9sxxumwLl2fJvCQtMn9Fxsg+lPpPkdcyBSv/KFgpGdYkMfn+EI1Or2EHjpgLCA==}
+  /pg-connection-string@2.7.0:
+    resolution: {integrity: sha512-PI2W9mv53rXJQEOb8xNR8lH7Hr+EKa6oJa38zsK0S/ky2er16ios1wLKhZyxzD7jUReiWokc9WK5nxSnC7W1TA==}
     dev: false
 
   /pg-int8@1.0.1:
@@ -6334,16 +6352,16 @@ packages:
     engines: {node: '>=4.0.0'}
     dev: false
 
-  /pg-pool@3.6.2(pg@8.12.0):
-    resolution: {integrity: sha512-Htjbg8BlwXqSBQ9V8Vjtc+vzf/6fVUuak/3/XXKA9oxZprwW3IMDQTGHP+KDmVL7rtd+R1QjbnCFPuTHm3G4hg==}
+  /pg-pool@3.7.0(pg@8.13.1):
+    resolution: {integrity: sha512-ZOBQForurqh4zZWjrgSwwAtzJ7QiRX0ovFkZr2klsen3Nm0aoh33Ls0fzfv3imeH/nw/O27cjdz5kzYJfeGp/g==}
     peerDependencies:
       pg: '>=8.0'
     dependencies:
-      pg: 8.12.0
+      pg: 8.13.1
     dev: false
 
-  /pg-protocol@1.6.1:
-    resolution: {integrity: sha512-jPIlvgoD63hrEuihvIg+tJhoGjUsLPn6poJY9N5CnlPd91c2T18T/9zBtLxZSb1EhYxBRoZJtzScCaWlYLtktg==}
+  /pg-protocol@1.7.0:
+    resolution: {integrity: sha512-hTK/mE36i8fDDhgDFjy6xNOG+LCorxLG3WO17tku+ij6sVHXh1jQUJ8hYAnRhNla4QVD2H8er/FOjc/+EgC6yQ==}
     dev: false
 
   /pg-types@2.2.0:
@@ -6357,8 +6375,8 @@ packages:
       postgres-interval: 1.2.0
     dev: false
 
-  /pg@8.12.0:
-    resolution: {integrity: sha512-A+LHUSnwnxrnL/tZ+OLfqR1SxLN3c/pgDztZ47Rpbsd4jUytsTtwQo/TLPRzPJMp/1pbhYVhH9cuSZLAajNfjQ==}
+  /pg@8.13.1:
+    resolution: {integrity: sha512-OUir1A0rPNZlX//c7ksiu7crsGZTKSOXJPgtNiHGIlC9H0lO+NC6ZDYksSgBYY/thSWhnSRBv8w1lieNNGATNQ==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -6366,9 +6384,9 @@ packages:
       pg-native:
         optional: true
     dependencies:
-      pg-connection-string: 2.6.4
-      pg-pool: 3.6.2(pg@8.12.0)
-      pg-protocol: 1.6.1
+      pg-connection-string: 2.7.0
+      pg-pool: 3.7.0(pg@8.13.1)
+      pg-protocol: 1.7.0
       pg-types: 2.2.0
       pgpass: 1.0.5
     optionalDependencies:
@@ -7463,11 +7481,11 @@ packages:
       rapiq: 0.9.0
       reflect-metadata: 0.2.2
       smob: 1.5.0
-      typeorm: 0.3.20(pg@8.12.0)(ts-node@10.9.2)
+      typeorm: 0.3.20(pg@8.13.1)(ts-node@10.9.2)
       yargs: 17.7.2
     dev: false
 
-  /typeorm@0.3.20(pg@8.12.0)(ts-node@10.9.2):
+  /typeorm@0.3.20(pg@8.13.1)(ts-node@10.9.2):
     resolution: {integrity: sha512-sJ0T08dV5eoZroaq9uPKBoNcGslHBR4E4y+EBHs//SiGbblGe7IeduP/IH4ddCcj0qp3PHwDwGnuvqEAnKlq/Q==}
     engines: {node: '>=16.13.0'}
     hasBin: true
@@ -7535,7 +7553,7 @@ packages:
       dotenv: 16.4.5
       glob: 10.3.10
       mkdirp: 2.1.6
-      pg: 8.12.0
+      pg: 8.13.1
       reflect-metadata: 0.2.2
       sha.js: 2.4.11
       ts-node: 10.9.2(@types/node@20.12.7)(typescript@5.4.5)
