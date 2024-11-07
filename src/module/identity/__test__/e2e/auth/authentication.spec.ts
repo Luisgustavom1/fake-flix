@@ -1,10 +1,11 @@
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@src/app.module';
+import { TestingModule } from '@nestjs/testing';
 import { UserModel } from '@identityModule/core/model/user.model';
 import { UserManagementService } from '@identityModule/core/service/user-management.service';
 import { UserRepository } from '@identityModule/persistence/repository/user.repository';
 import * as request from 'supertest';
+import { IdentityModule } from '@identityModule/identity.module';
+import { createNestApp } from '@testInfra/test-e2e.setup';
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication;
@@ -13,12 +14,10 @@ describe('AuthResolver (e2e)', () => {
   let module: TestingModule;
 
   beforeAll(async () => {
-    module = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    const nestTestSetup = await createNestApp([IdentityModule]);
+    app = nestTestSetup.app;
+    module = nestTestSetup.module;
 
-    app = module.createNestApplication();
-    await app.init();
     userManagementService = module.get<UserManagementService>(
       UserManagementService,
     );

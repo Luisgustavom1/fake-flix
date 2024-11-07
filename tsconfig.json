@@ -25,10 +25,12 @@
       "@contentModule/*": ["src/module/content/*"],
       "@identityModule/*": ["src/module/identity/*"],
       "@sharedModule/*": ["src/module/shared/module/*"],
+      "@billingModule/*": ["./src/module/billing/*"],
       "@sharedLibs/*": ["src/module/shared/*"],
+      "@testInfra/*": ["./test/*"],
       "@src/*": ["src/*"],
       "@resource/*": ["resource/*"]
     }
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*", "test/**/*", "database/drizzle"]
 }

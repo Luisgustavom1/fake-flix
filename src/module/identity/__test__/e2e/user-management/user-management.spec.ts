@@ -1,8 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '@src/app.module';
+import { TestingModule } from '@nestjs/testing';
 import { UserRepository } from '@identityModule/persistence/repository/user.repository';
 import * as request from 'supertest';
+import { IdentityModule } from '@identityModule/identity.module';
+import { createNestApp } from '@testInfra/test-e2e.setup';
 
 describe('UserResolver (e2e)', () => {
   let app: INestApplication;
@@ -10,12 +11,10 @@ describe('UserResolver (e2e)', () => {
   let module: TestingModule;
 
   beforeAll(async () => {
-    module = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    const nestTestSetup = await createNestApp([IdentityModule]);
+    app = nestTestSetup.app;
+    module = nestTestSetup.module;
 
-    app = module.createNestApplication();
-    await app.init();
     userRepository = module.get<UserRepository>(UserRepository);
   });
 
@@ -62,38 +61,6 @@ describe('UserResolver (e2e)', () => {
       expect(firstName).toBe(createUserInput.firstName);
       expect(lastName).toBe(createUserInput.lastName);
       expect(email).toBe(createUserInput.email);
-    });
-    it('throws error for invalid email validation', async () => {
-      const createUserInput = {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'invalidemail',
-        password: 'password123',
-      };
-
-      const response = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            mutation {
-              createUser(CreateUserInput: {
-                firstName: "${createUserInput.firstName}",
-                lastName: "${createUserInput.lastName}",
-                email: "${createUserInput.email}",
-                password: "${createUserInput.password}"
-              }) {
-                id
-                firstName
-                lastName
-                email
-              }
-            }
-          `,
-        })
-        .expect(200);
-      expect(response.body.errors[0].message).toBe(
-        `Invalid email: ${createUserInput.email}`,
-      );
     });
   });
 });

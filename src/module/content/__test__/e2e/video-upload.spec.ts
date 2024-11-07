@@ -1,7 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { FILES_DEST } from '@contentModule/http/rest/controller/video-upload.controller';
-import { AppModule } from '@src/app.module';
 import * as fs from 'fs';
 import * as request from 'supertest';
 import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
@@ -12,6 +11,8 @@ import {
   searchKeyword,
   searchMovie,
 } from '../../../../../test/utils/http/rest/client/external-movie-rating';
+import { ContentModule } from '@contentModule/content.module';
+import { createNestApp } from '@testInfra/test-e2e.setup';
 
 describe('VideoUploadController (e2e)', () => {
   let module: TestingModule;
@@ -21,12 +22,9 @@ describe('VideoUploadController (e2e)', () => {
   let movieRepository: MovieRepository;
 
   beforeAll(async () => {
-    module = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = module.createNestApplication();
-    await app.init();
+    const nestTestSetup = await createNestApp([ContentModule]);
+    app = nestTestSetup.app;
+    module = nestTestSetup.module;
 
     videoRepository = module.get<VideoRepository>(VideoRepository);
     contentRepository = module.get<ContentRepository>(ContentRepository);
