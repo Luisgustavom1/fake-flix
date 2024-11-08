@@ -5,6 +5,7 @@ import { subscriptionsTable } from '@billingModule/persistence/database.schema';
 import { eq, InferSelectModel } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { DrizzleDefaultRepository } from '@sharedModule/persistence/drizzle/repository/drizzle-default.repository';
+import { DB_POSTGRES_TAG } from '@sharedModule/persistence/drizzle/drizzle-persistence.module';
 
 @Injectable()
 export class SubscriptionRepository extends DrizzleDefaultRepository<
@@ -12,7 +13,7 @@ export class SubscriptionRepository extends DrizzleDefaultRepository<
   typeof subscriptionsTable
 > {
   constructor(
-    @Inject('DB_POSTGRES')
+    @Inject(DB_POSTGRES_TAG)
     protected readonly db: PostgresJsDatabase<typeof schema>,
   ) {
     super(db, subscriptionsTable);
