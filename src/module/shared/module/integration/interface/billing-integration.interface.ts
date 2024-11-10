@@ -1,3 +1,5 @@
+import { BillingSubscriptionRepository } from '@identityModule/persistence/repository/external/billing-subscription.repository';
+
 export interface BillingSubscriptionStatusApi {
   isUserSubscriptionActive(userId: string): Promise<boolean>;
 }
@@ -5,3 +7,8 @@ export interface BillingSubscriptionStatusApi {
 export const BillingSubscriptionStatusApi = Symbol(
   'BillingSubscriptionStatusApi',
 );
+
+export const BillingSubscriptionStatusApiProvider = {
+  provide: BillingSubscriptionStatusApi,
+  useExisting: BillingSubscriptionRepository,
+};
