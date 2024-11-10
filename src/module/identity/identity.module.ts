@@ -34,8 +34,8 @@ import { BillingSubscriptionStatusApiProvider } from '@sharedModule/integration/
     UserResolver,
     UserManagementService,
     UserRepository,
-    BillingSubscriptionStatusApiProvider,
     BillingSubscriptionRepository,
+    BillingSubscriptionStatusApiProvider,
   ],
 })
 export class IdentityModule {}

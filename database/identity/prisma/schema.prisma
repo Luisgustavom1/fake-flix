@@ -9,21 +9,21 @@ datasource db {
   schemas  = ["identity", "test", "public"]
 }
 
-enum SubscriptionStatus {
-  ACTIVE
-  INACTIVE
+// enum SubscriptionStatus {
+//   ACTIVE
+//   INACTIVE
 
-  @@map("status")
-  @@schema("public")
-}
+//   @@map("status")
+//   @@schema("public")
+// }
 
-model Subscription {
-  id     String             @id
-  userId String
-  status SubscriptionStatus
+// model Subscription {
+//   id     String             @id
+//   userId String
+//   status SubscriptionStatus
 
-  @@schema("public")
-}
+//   @@schema("public")
+// }
 
 // enum ContentType {
 //   MOVIE
