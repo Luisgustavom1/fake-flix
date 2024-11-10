@@ -10,6 +10,7 @@ import { testDbClient } from '@testInfra/knex.database';
 import { planFactory } from '@testInfra/factory/identity/plan.test-factory';
 import { subscriptionFactory } from '@testInfra/factory/identity/subscription.test-factory';
 import { Tables } from '@testInfra/enum/tables';
+import * as nock from 'nock';
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication;
@@ -42,7 +43,67 @@ describe('AuthResolver (e2e)', () => {
   });
 
   describe('signIn mutation', () => {
-    it('returns accessToken for valid credentials', async () => {
+    it('returns the authenticated user - USING HTTP for module to module calls', async () => {
+      const signInInput = {
+        email: 'johndoe@example.com',
+        password: 'password123',
+      };
+      const createdUser = await userManagementService.create(
+        UserModel.create({
+          firstName: 'John',
+          lastName: 'Doe',
+          email: signInInput.email,
+          password: signInInput.password,
+        }),
+      );
+      nock('https://localhost:3000', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true,
+        },
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`/subscription/user/${createdUser.id}`)
+        .reply(200, {
+          status: 'ACTIVE',
+        });
+
+      const acessTokenResponse = await request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `
+            mutation {
+              signIn(SignInInput: {
+                email: "${signInInput.email}",
+                password: "${signInInput.password}"
+              }) {
+                accessToken
+              }
+            }
+          `,
+        });
+      const response = await request(app.getHttpServer())
+        .post('/graphql')
+        .set(
+          'Authorization',
+          `Bearer ${acessTokenResponse.body.data.signIn.accessToken}`,
+        )
+        .send({
+          query: `
+            query {
+              getProfile {
+                email
+              }
+            }
+          `,
+        });
+
+      const { email } = response.body.data.getProfile;
+
+      expect(email).toEqual(signInInput.email);
+    });
+
+    it.skip('returns accessToken for valid credentials', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123',
@@ -83,6 +144,7 @@ describe('AuthResolver (e2e)', () => {
 
       expect(response.body.data.signIn.accessToken).toBeDefined();
     });
+
     it('returns unauthorized if the user does not exist', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
@@ -108,7 +170,7 @@ describe('AuthResolver (e2e)', () => {
     });
   });
   describe('getProfile query', () => {
-    it('returns the authenticated user', async () => {
+    it.skip('returns the authenticated user', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123',
