@@ -6,7 +6,7 @@ import { SubscriptionStatus } from '@billingModule/core/model/subscription.model
 import { PlanRepository } from '@billingModule/persistence/repository/plan.repository';
 import { SubscriptionRepository } from '@billingModule/persistence/repository/subscription.repository';
 import { randomUUID } from 'crypto';
-import request from 'supertest';
+import * as request from 'supertest';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 
 describe('Subscription e2e test', () => {

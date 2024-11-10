@@ -8,14 +8,34 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/src/core/service/media-player.service.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest: Debug Current Test File",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "args": [
+        "${file}",
+        "--config",
+        "${workspaceFolder}/test/jest.e2e.ts",
+        "--runInBand",
+        "--no-cache"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/", "node_modules/"],
+      "runtimeArgs": ["--inspect-brk"],
+      "sourceMaps": true,
+      "restart": true,
+      "protocol": "inspector",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "disableOptimisticBPs": true
     }
   ]
 }

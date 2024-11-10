@@ -24,13 +24,13 @@
     "paths": {
       "@contentModule/*": ["src/module/content/*"],
       "@identityModule/*": ["src/module/identity/*"],
+      "@billingModule/*": ["src/module/billing/*"],
       "@sharedModule/*": ["src/module/shared/module/*"],
-      "@billingModule/*": ["./src/module/billing/*"],
       "@sharedLibs/*": ["src/module/shared/*"],
-      "@testInfra/*": ["./test/*"],
+      "@testInfra/*": ["test/*"],
       "@src/*": ["src/*"],
       "@resource/*": ["resource/*"]
     }
   },
-  "include": ["src/**/*", "test/**/*", "database/drizzle"]
+  "include": ["src/**/*", "test/**/*", "database/**/*"]
 }
