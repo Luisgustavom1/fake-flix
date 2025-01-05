@@ -11,6 +11,7 @@ import { SubscriptionService } from '@billingModule/core/service/subscription.se
 import { CreateSubscriptionRequestDto } from '@billingModule/http/rest/dto/request/create-subscription.dto';
 import { SubscriptionResponseDto } from '@billingModule/http/rest/dto/response/subscription-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { UserSubscriptionActiveResponseDto } from '@billingModule/http/rest/dto/response/user-subscription-active-response.dto';
 
 @Controller('subscription')
 export class SubscriptionController {
@@ -42,14 +43,18 @@ export class SubscriptionController {
     }
   }
 
-  @Get('/user/:userId')
-  async getSubscriptionByUserId(
+  @Get('/user/:userId/active')
+  async isUserSubscriptionActive(
     userId: string,
-  ): Promise<SubscriptionResponseDto> {
-    const subscription =
-      await this.subscriptionService.getSubscriptionByUserId(userId);
-    return plainToInstance(SubscriptionResponseDto, subscription, {
-      excludeExtraneousValues: true,
-    });
+  ): Promise<UserSubscriptionActiveResponseDto> {
+    const isActive =
+      await this.subscriptionService.isUserSubscriptionActive(userId);
+    return plainToInstance(
+      UserSubscriptionActiveResponseDto,
+      { isActive },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 }

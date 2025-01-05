@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserUnauthorizedException } from '@identityModule/core/exception/user-unauthorized.exception';
 import { UserRepository } from '@identityModule/persistence/repository/user.repository';
 import * as bcrypt from 'bcrypt';
-import { BillingSubscriptionStatusApi } from '@sharedModule/integration/interface/billing-integration.interface';
+import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
 
 // TODO: move this to a .env file and config
 export const jwtConstants = {
@@ -15,8 +15,8 @@ export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
-    @Inject(BillingSubscriptionStatusApi)
-    private readonly subscriptionServiceClient: BillingSubscriptionStatusApi,
+    @Inject(BillingSubscriptionApi)
+    private readonly subscriptionServiceClient: BillingSubscriptionApi,
   ) {}
 
   async signIn(

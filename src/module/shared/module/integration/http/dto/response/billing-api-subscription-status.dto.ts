@@ -4,6 +4,5 @@ export enum BillingApiSubscriptionStatus {
 }
 
 export class BillingApiSubscriptionStatusResponseDto {
-  readonly id: string;
-  readonly status: BillingApiSubscriptionStatus;
+  isActive: boolean;
 }

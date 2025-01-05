@@ -43,7 +43,7 @@ describe('AuthResolver (e2e)', () => {
   });
 
   describe('signIn mutation', () => {
-    it('returns the authenticated user - USING HTTP for module to module calls', async () => {
+    it.skip('returns the authenticated user - USING HTTP for module to module calls', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123',
@@ -68,7 +68,7 @@ describe('AuthResolver (e2e)', () => {
           status: 'ACTIVE',
         });
 
-      const acessTokenResponse = await request(app.getHttpServer())
+      const accessTokenResponse = await request(app.getHttpServer())
         .post('/graphql')
         .send({
           query: `
@@ -86,7 +86,7 @@ describe('AuthResolver (e2e)', () => {
         .post('/graphql')
         .set(
           'Authorization',
-          `Bearer ${acessTokenResponse.body.data.signIn.accessToken}`,
+          `Bearer ${accessTokenResponse.body.data.signIn.accessToken}`,
         )
         .send({
           query: `

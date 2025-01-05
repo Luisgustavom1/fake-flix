@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { BillingSubscriptionStatusApi } from '../interface/billing-integration.interface';
+import { BillingSubscriptionApi } from '../interface/billing-integration.interface';
 import { HttpClient } from '@sharedModule/http/client/http.client';
 import { ConfigService } from '@nestjs/config';
-import {
-  BillingApiSubscriptionStatus,
-  BillingApiSubscriptionStatusResponseDto,
-} from '../http/dto/response/billing-api-subscription-status.dto';
+import { BillingApiSubscriptionStatusResponseDto } from '../http/dto/response/billing-api-subscription-status.dto';
 
 @Injectable()
-export class BillingSubscriptionHttpClient
-  implements BillingSubscriptionStatusApi
-{
+export class BillingSubscriptionHttpClient implements BillingSubscriptionApi {
   constructor(
     private readonly httpClient: HttpClient,
     private readonly configService: ConfigService,
@@ -26,16 +21,14 @@ export class BillingSubscriptionHttpClient
     };
     const url = `${
       this.configService.get('billingApi').url
-    }/subscription/user/${userId}`;
+    }/subscription/user/${userId}/active`;
 
-    const response =
+    const { isActive } =
       await this.httpClient.get<BillingApiSubscriptionStatusResponseDto>(
         url,
         options,
       );
 
-    return response.status === BillingApiSubscriptionStatus.Active
-      ? true
-      : false;
+    return isActive;
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BillingSubscriptionStatusApi } from '@sharedModule/integration/interface/billing-integration.interface';
+import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
 import { DefaultPrismaRepository } from '@sharedModule/persistence/prisma/default.prisma.repository';
 import { PrismaService } from '@sharedModule/persistence/prisma/prisma.service';
 
@@ -12,7 +12,7 @@ import { PrismaService } from '@sharedModule/persistence/prisma/prisma.service';
 @Injectable()
 export class BillingSubscriptionRepository
   extends DefaultPrismaRepository
-  implements BillingSubscriptionStatusApi
+  implements BillingSubscriptionApi
 {
   private readonly model: PrismaService['subscription'];
 

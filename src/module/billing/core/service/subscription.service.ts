@@ -36,9 +36,13 @@ export class SubscriptionService {
     return subscription;
   }
 
-  async getSubscriptionByUserId(
-    userId: string,
-  ): Promise<SubscriptionModel | null> {
-    return this.subscriptionRepository.findByUserId(userId);
+  async isUserSubscriptionActive(userId: string): Promise<boolean> {
+    const subscription = await this.subscriptionRepository.findByUserId(userId);
+    if (!subscription) {
+      throw new NotFoundDomainException(
+        `Subscription for user with id ${userId} not found`,
+      );
+    }
+    return subscription.status === SubscriptionStatus.Active;
   }
 }

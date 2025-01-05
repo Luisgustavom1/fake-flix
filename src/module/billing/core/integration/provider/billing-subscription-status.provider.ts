@@ -1,19 +1,12 @@
-import { SubscriptionStatus } from '@billingModule/core/model/subscription.model';
-import { SubscriptionRepository } from '@billingModule/persistence/repository/subscription.repository';
+import { SubscriptionService } from '@billingModule/core/service/subscription.service';
 import { Injectable } from '@nestjs/common';
-import { BillingSubscriptionStatusApi } from '@sharedModule/integration/interface/billing-integration.interface';
+import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
 
 @Injectable()
-export class BillingSubscriptionStatusProvider
-  implements BillingSubscriptionStatusApi
-{
-  constructor(
-    private readonly subscriptionRepository: SubscriptionRepository,
-  ) {}
+export class BillingSubscriptionProvider implements BillingSubscriptionApi {
+  constructor(private readonly subscriptionService: SubscriptionService) {}
 
   async isUserSubscriptionActive(userId: string): Promise<boolean> {
-    const subscription = await this.subscriptionRepository.findByUserId(userId);
-
-    return subscription.status === SubscriptionStatus.Active;
+    return this.subscriptionService.isUserSubscriptionActive(userId);
   }
 }
