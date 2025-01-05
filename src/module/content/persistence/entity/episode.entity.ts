@@ -6,25 +6,30 @@ import { Video } from './video.entity';
 
 @Entity({ name: 'Episode' })
 export class Episode extends DefaultEntity<Episode> {
-  @Column()
+  @Column({ type: 'varchar', length: 255, nullable: false })
   title: string;
 
-  @Column()
+  @Column('text')
   description: string;
 
-  @Column()
+  @Column({ type: 'int', nullable: false })
   season: number;
 
-  @Column()
+  @Column({ type: 'int', nullable: false })
   episode: number;
+
+  @Column({ type: 'uuid', nullable: false })
+  tvShowId: string;
+
+  @OneToOne(() => Thumbnail)
+  @JoinColumn()
+  thumbnail: Thumbnail | null;
 
   @ManyToMany(() => TvShow, (tvShow) => tvShow.episodes)
   tvShow: TvShow;
 
-  @OneToOne(() => Thumbnail)
-  @JoinColumn()
-  thumbnail: Thumbnail;
-
-  @OneToOne(() => Video, (video) => video.episode)
+  @OneToOne(() => Video, (video) => video.episode, {
+    cascade: true,
+  })
   video: Video;
 }

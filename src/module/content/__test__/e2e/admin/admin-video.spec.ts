@@ -1,34 +1,24 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { TestingModule } from '@nestjs/testing';
-import { FILES_DEST } from '@contentModule/http/rest/controller/video-upload.controller';
+import { FILES_DEST } from '@contentModule/http/rest/controller/admin-movie.controller';
 import * as fs from 'fs';
 import * as request from 'supertest';
-import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
-import { ContentRepository } from '@contentModule/persistence/repository/content.repository';
-import { MovieRepository } from '@contentModule/persistence/repository/movie.repository';
 import * as nock from 'nock';
 import {
   searchKeyword,
   searchMovie,
-} from '../../../../../test/utils/http/rest/client/external-movie-rating';
+} from '../../../../../../test/utils/http/rest/client/external-movie-rating';
 import { ContentModule } from '@contentModule/content.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
+import { testDbClient } from '@testInfra/knex.database';
+import { Tables } from '@testInfra/enum/tables';
+import { TestingModule } from '@nestjs/testing';
 
 describe('VideoUploadController (e2e)', () => {
-  let module: TestingModule;
   let app: INestApplication;
-  let videoRepository: VideoRepository;
-  let contentRepository: ContentRepository;
-  let movieRepository: MovieRepository;
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([ContentModule]);
     app = nestTestSetup.app;
-    module = nestTestSetup.module;
-
-    videoRepository = module.get<VideoRepository>(VideoRepository);
-    contentRepository = module.get<ContentRepository>(ContentRepository);
-    movieRepository = module.get<MovieRepository>(MovieRepository);
   });
 
   beforeEach(async () => {
@@ -38,9 +28,9 @@ describe('VideoUploadController (e2e)', () => {
   });
 
   afterEach(async () => {
-    await videoRepository.clear();
-    await movieRepository.clear();
-    await contentRepository.clear();
+    await testDbClient(Tables.Video).del();
+    await testDbClient(Tables.Movie).del();
+    await testDbClient(Tables.Content).del();
     nock.cleanAll();
   });
 
@@ -49,8 +39,8 @@ describe('VideoUploadController (e2e)', () => {
     fs.rmSync(FILES_DEST, { recursive: true, force: true });
   });
 
-  describe('POST /video', () => {
-    it('should upload a video', async () => {
+  describe('POST /admin/movie', () => {
+    it('should upload a movie', async () => {
       const expectedVideo = {
         title: 'Test video',
         description: 'Test description',
@@ -74,7 +64,7 @@ describe('VideoUploadController (e2e)', () => {
       });
 
       await request(app.getHttpServer())
-        .post('/video')
+        .post('/admin/movie')
         .attach('thumbnail', './test/fixtures/sample.jpg')
         .attach('video', './test/fixtures/sample.mp4')
         .field('title', expectedVideo.title)
@@ -90,7 +80,7 @@ describe('VideoUploadController (e2e)', () => {
 
     it('throws an error when the thumbnail is not provided', async () => {
       await request(app.getHttpServer())
-        .post('/video')
+        .post('/admin/movie')
         .attach('video', './test/fixtures/sample.mp4')
         .field('title', 'Test video')
         .field('description', 'Test description')
@@ -106,7 +96,7 @@ describe('VideoUploadController (e2e)', () => {
 
     it('does not allow non mp4 files', async () => {
       await request(app.getHttpServer())
-        .post('/video')
+        .post('/admin/movie')
         .attach('video', './test/fixtures/sample.mp3')
         .field('title', 'Test video')
         .field('description', 'Test description')

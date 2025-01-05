@@ -1,39 +1,30 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { TestingModule } from '@nestjs/testing';
-import { FILES_DEST } from '@contentModule/http/rest/controller/video-upload.controller';
+import { FILES_DEST } from '@contentModule/http/rest/controller/admin-movie.controller';
 import * as fs from 'fs';
 import * as request from 'supertest';
 import * as nock from 'nock';
-import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
 import { ContentManagementService } from '@contentModule/core/service/content-management.service';
-import { MovieRepository } from '@contentModule/persistence/repository/movie.repository';
-import { ContentRepository } from '@contentModule/persistence/repository/content.repository';
 import {
   searchKeyword,
   searchMovie,
-} from '../../../../../test/utils/http/rest/client/external-movie-rating';
+} from '../../../../../../test/utils/http/rest/client/external-movie-rating';
 import { ContentModule } from '@contentModule/content.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
+import { testDbClient } from '@testInfra/knex.database';
+import { Tables } from '@testInfra/enum/tables';
 
 describe('VideoController (e2e)', () => {
-  let module: TestingModule;
   let app: INestApplication;
-  let videoRepository: VideoRepository;
-  let movieRepository: MovieRepository;
-  let contentRepository: ContentRepository;
   let contentManagementService: ContentManagementService;
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([ContentModule]);
     app = nestTestSetup.app;
-    module = nestTestSetup.module;
 
-    contentManagementService = module.get<ContentManagementService>(
-      ContentManagementService,
-    );
-    videoRepository = module.get<VideoRepository>(VideoRepository);
-    movieRepository = module.get<MovieRepository>(MovieRepository);
-    contentRepository = module.get<ContentRepository>(ContentRepository);
+    contentManagementService =
+      nestTestSetup.module.get<ContentManagementService>(
+        ContentManagementService,
+      );
   });
 
   beforeEach(async () => {
@@ -43,9 +34,9 @@ describe('VideoController (e2e)', () => {
   });
 
   afterEach(async () => {
-    await videoRepository.clear();
-    await movieRepository.clear();
-    await contentRepository.clear();
+    await testDbClient(Tables.Video).del();
+    await testDbClient(Tables.Movie).del();
+    await testDbClient(Tables.Content).del();
     nock.cleanAll();
   });
 

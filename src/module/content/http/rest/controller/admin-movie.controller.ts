@@ -22,13 +22,13 @@ export const FILES_DEST = './uploads';
 const MAX_THUMBNAIL_SIZE = 1024 * 1024 * 10; // 10MB
 const MAX_VIDEO_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
 
-@Controller()
-export class VideoUploadController {
+@Controller('admin')
+export class AdminMovieController {
   constructor(
     private readonly contentManagementService: ContentManagementService,
   ) {}
 
-  @Post('video')
+  @Post('movie')
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(new RestResponseInterceptor(CreateVideoResponseDTO))
   @UseInterceptors(
@@ -57,7 +57,7 @@ export class VideoUploadController {
       },
     ),
   )
-  async uploadVideo(
+  async uploadMovie(
     @Req() _req: Request,
     @UploadedFiles()
     files: {

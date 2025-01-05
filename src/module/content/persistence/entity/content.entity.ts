@@ -9,10 +9,10 @@ export class Content extends DefaultEntity<Content> {
   @Column({ nullable: false, type: 'enum', enum: ContentType })
   type: ContentType;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: false, length: 255 })
   title: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'text', nullable: false })
   description: string;
 
   @OneToOne(() => Movie, (movie) => movie.content, {

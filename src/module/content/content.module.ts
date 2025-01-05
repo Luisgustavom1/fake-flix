@@ -6,13 +6,13 @@ import { VideoRepository } from '@contentModule/persistence/repository/video.rep
 import { PersistenceModule } from '@contentModule/persistence/persistence.module';
 import { HttpClient } from '@sharedModule/http/client/http.client';
 import { ConfigModule } from '@sharedModule/config/config.module';
-import { VideoUploadController } from '@contentModule/http/rest/controller/video-upload.controller';
+import { AdminMovieController } from '@contentModule/http/rest/controller/admin-movie.controller';
 import { MediaPlayerController } from '@contentModule/http/rest/controller/media-player.controller';
 import { ExternalMovieClient } from '@contentModule/http/rest/client/external-movie-rating/external-movie-rating.client';
 
 @Module({
   imports: [PersistenceModule.forRoot(), ConfigModule.forRoot()],
-  controllers: [VideoUploadController, MediaPlayerController],
+  controllers: [AdminMovieController, MediaPlayerController],
   providers: [
     ContentManagementService,
     MediaPlayerService,

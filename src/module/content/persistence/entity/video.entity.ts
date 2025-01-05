@@ -5,13 +5,13 @@ import { Episode } from './episode.entity';
 
 @Entity({ name: 'Video' })
 export class Video extends DefaultEntity<Video> {
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   url: string;
 
-  @Column()
+  @Column('int')
   sizeInKb: number;
 
-  @Column()
+  @Column('int')
   duration: number;
 
   @OneToOne(() => Movie, (movie) => movie.video)

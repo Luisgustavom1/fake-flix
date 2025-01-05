@@ -29,15 +29,4 @@ export abstract class DefaultTypeOrmRepository<T extends DefaultEntity<T>> {
       where: { id } as FindOptionsWhere<T>,
     });
   }
-
-  /*
-   * Used only in tests to clear the database
-   */
-  async clear(): Promise<void> {
-    if (process.env.NODE_ENV !== 'test') {
-      throw new Error('This method should only be used in tests');
-    }
-    const entities = await this.repository.find();
-    await this.repository.remove(entities);
-  }
 }

@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 import { UserModel } from '@identityModule/core/model/user.model';
 import { UserManagementService } from '@identityModule/core/service/user-management.service';
-import { UserRepository } from '@identityModule/persistence/repository/user.repository';
 import * as request from 'supertest';
 import { IdentityModule } from '@identityModule/identity.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
@@ -15,7 +14,6 @@ import * as nock from 'nock';
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication;
   let userManagementService: UserManagementService;
-  let userRepository: UserRepository;
   let module: TestingModule;
 
   beforeAll(async () => {
@@ -23,20 +21,19 @@ describe('AuthResolver (e2e)', () => {
     app = nestTestSetup.app;
     module = nestTestSetup.module;
 
-    userManagementService = module.get<UserManagementService>(
+    userManagementService = nestTestSetup.app.get<UserManagementService>(
       UserManagementService,
     );
-    userRepository = module.get<UserRepository>(UserRepository);
   });
 
   beforeEach(async () => {
-    await userRepository.clear();
+    await testDbClient(Tables.User).del();
     await testDbClient(Tables.Subscription).del();
     await testDbClient(Tables.Plan).del();
   });
 
   afterAll(async () => {
-    await userRepository.clear();
+    await testDbClient(Tables.User).del();
     await testDbClient(Tables.Subscription).del();
     await testDbClient(Tables.Plan).del();
     await module.close();
