@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common';
-import { TypeOrmPersistenceModule } from '@contentModule/infra/module/typeorm/typeorm-persistence';
+import { TypeOrmPersistenceModule } from '@sharedModule/persistence/typeorm/typeorm-persistence';
 import { Content } from './entity/content.entity';
 import { Movie } from './entity/movie.entity';
 import { Thumbnail } from './entity/thumbnail.entity';
@@ -9,6 +9,7 @@ import { Episode } from './entity/episode.entity';
 import { ContentRepository } from './repository/content.repository';
 import { MovieRepository } from './repository/movie.repository';
 import { VideoRepository } from './repository/video.repository';
+import { EpisodeRepository } from './repository/episode.repository';
 
 export class PersistenceModule {
   static forRoot(opts?: { migrations?: string[] }): DynamicModule {
@@ -21,8 +22,18 @@ export class PersistenceModule {
           entities: [Content, Movie, Thumbnail, Video, TvShow, Episode],
         }),
       ],
-      providers: [ContentRepository, MovieRepository, VideoRepository],
-      exports: [ContentRepository, MovieRepository, VideoRepository],
+      providers: [
+        ContentRepository,
+        MovieRepository,
+        VideoRepository,
+        EpisodeRepository,
+      ],
+      exports: [
+        ContentRepository,
+        MovieRepository,
+        VideoRepository,
+        EpisodeRepository,
+      ],
     };
   }
 }

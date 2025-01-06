@@ -1,4 +1,4 @@
-import { DefaultEntity } from '@contentModule/infra/module/typeorm/entity/default.entity';
+import { DefaultEntity } from '@sharedModule/persistence/typeorm/entity/default.entity';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { Movie } from './movie.entity';
 import { Episode } from './episode.entity';

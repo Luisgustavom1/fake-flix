@@ -9,10 +9,18 @@ import { ConfigModule } from '@sharedModule/config/config.module';
 import { AdminMovieController } from '@contentModule/http/rest/controller/admin-movie.controller';
 import { MediaPlayerController } from '@contentModule/http/rest/controller/media-player.controller';
 import { ExternalMovieClient } from '@contentModule/http/rest/client/external-movie-rating/external-movie-rating.client';
+import { AdminTvShowController } from './http/rest/controller/admin-tv-show-controller';
+import { AgeRecommendationService } from './core/service/age-recommendation.service';
+import { VideoMetadataService } from './core/service/video-metadata.service';
+import { VideoProfanityFilterService } from './core/service/video-profanity-filter.service';
 
 @Module({
   imports: [PersistenceModule.forRoot(), ConfigModule.forRoot()],
-  controllers: [AdminMovieController, MediaPlayerController],
+  controllers: [
+    AdminMovieController,
+    MediaPlayerController,
+    AdminTvShowController,
+  ],
   providers: [
     ContentManagementService,
     MediaPlayerService,
@@ -20,6 +28,9 @@ import { ExternalMovieClient } from '@contentModule/http/rest/client/external-mo
     VideoRepository,
     ExternalMovieClient,
     HttpClient,
+    AgeRecommendationService,
+    VideoMetadataService,
+    VideoProfanityFilterService,
   ],
 })
 export class ContentModule {}
