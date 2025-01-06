@@ -18,7 +18,7 @@ export class Content extends DefaultEntity<Content> {
   @OneToOne(() => Movie, (movie) => movie.content, {
     cascade: true,
   })
-  movie: Movie;
+  movie?: Movie;
 
   @OneToOne(() => TvShow, (tvShow) => tvShow.content, {
     cascade: true,

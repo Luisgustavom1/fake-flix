@@ -16,7 +16,7 @@ export class Episode extends DefaultEntity<Episode> {
   season: number;
 
   @Column({ type: 'int', nullable: false })
-  episode: number;
+  number: number;
 
   @Column({ type: 'uuid', nullable: false })
   tvShowId: string;
