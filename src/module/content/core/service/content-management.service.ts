@@ -19,6 +19,7 @@ import { VideoProfanityFilterService } from './video-profanity-filter.service';
 import { AgeRecommendationService } from './age-recommendation.service';
 import { MovieContentModel } from '../model/movie-content.model';
 import { TvShowContentModel } from '../model/tv-show-content.model';
+import { Transactional } from 'typeorm-transactional';
 
 export interface CreateMovieData {
   title: string;
@@ -88,6 +89,7 @@ export class ContentManagementService {
     return await this.contentRepository.saveTvShow(content);
   }
 
+  @Transactional()
   async createEpisode(
     contentId: string,
     episodeData: CreateEpisodeRequestDto & {
