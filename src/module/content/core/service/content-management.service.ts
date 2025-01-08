@@ -17,6 +17,8 @@ import { EpisodeRepository } from '@contentModule/persistence/repository/episode
 import { VideoMetadataService } from './video-metadata.service';
 import { VideoProfanityFilterService } from './video-profanity-filter.service';
 import { AgeRecommendationService } from './age-recommendation.service';
+import { MovieContentModel } from '../model/movie-content.model';
+import { TvShowContentModel } from '../model/tv-show-content.model';
 
 export interface CreateMovieData {
   title: string;
@@ -42,10 +44,10 @@ export class ContentManagementService {
       createMovieData.title,
     );
 
-    const contentEntity = new Content({
+    const content = new MovieContentModel({
       title: createMovieData.title,
       description: createMovieData.description,
-      type: ContentType.MOVIE,
+      ageRecommendation: null,
       movie: new Movie({
         externalRating,
         video: new Video({
@@ -57,14 +59,12 @@ export class ContentManagementService {
     });
 
     if (createMovieData.thumbnailUrl) {
-      contentEntity.movie.thumbnail = new Thumbnail({
+      content.movie.thumbnail = new Thumbnail({
         url: createMovieData.thumbnailUrl,
       });
     }
 
-    const content = await this.contentRepository.save(contentEntity);
-
-    return content;
+    return await this.contentRepository.saveMovie(content);
   }
 
   async createTvShow(tvShow: {
@@ -72,11 +72,10 @@ export class ContentManagementService {
     title: string;
     description: string;
     thumbnailUrl?: string;
-  }): Promise<Content> {
-    const content = new Content({
+  }): Promise<TvShowContentModel> {
+    const content = new TvShowContentModel({
       title: tvShow.title,
       description: tvShow.description,
-      type: ContentType.TV_SHOW,
       tvShow: new TvShow({}),
     });
 
@@ -86,7 +85,7 @@ export class ContentManagementService {
       });
     }
 
-    return await this.contentRepository.save(content);
+    return await this.contentRepository.saveTvShow(content);
   }
 
   async createEpisode(
@@ -96,10 +95,11 @@ export class ContentManagementService {
       videoSizeInKb: number;
     },
   ): Promise<Episode> {
-    const content = await this.contentRepository.findOneById(contentId, [
-      'tvShow',
-    ]);
-    if (!content.tvShow) {
+    const content = await this.contentRepository.findTvShowContentById(
+      contentId,
+      ['tvShow'],
+    );
+    if (!content?.tvShow) {
       throw new NotFoundException(
         `TV Show with content id ${contentId} not found`,
       );
@@ -154,7 +154,7 @@ export class ContentManagementService {
     content.ageRecommendation = ageRecommendation;
 
     //not transactional
-    await this.contentRepository.save(content);
+    await this.contentRepository.saveTvShow(content);
     await this.episodeRepository.save(episode);
 
     return episode;
