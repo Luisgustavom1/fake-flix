@@ -10,6 +10,8 @@ import { ContentRepository } from './repository/content.repository';
 import { MovieRepository } from './repository/movie.repository';
 import { VideoRepository } from './repository/video.repository';
 import { EpisodeRepository } from './repository/episode.repository';
+import { TransactionManagerService } from './transaction-manager.service';
+import { DataSource } from 'typeorm';
 
 export class PersistenceModule {
   static forRoot(opts?: { migrations?: string[] }): DynamicModule {
@@ -23,16 +25,42 @@ export class PersistenceModule {
         }),
       ],
       providers: [
-        ContentRepository,
-        MovieRepository,
-        VideoRepository,
-        EpisodeRepository,
+        {
+          provide: ContentRepository,
+          useFactory: (ds: DataSource) => {
+            return new ContentRepository(ds.manager);
+          },
+          inject: [DataSource],
+        },
+        {
+          provide: MovieRepository,
+          useFactory: (ds: DataSource) => {
+            return new MovieRepository(ds.manager);
+          },
+          inject: [DataSource],
+        },
+        {
+          provide: VideoRepository,
+          useFactory: (ds: DataSource) => {
+            return new VideoRepository(ds.manager);
+          },
+          inject: [DataSource],
+        },
+        {
+          provide: EpisodeRepository,
+          useFactory: (ds: DataSource) => {
+            return new EpisodeRepository(ds.manager);
+          },
+          inject: [DataSource],
+        },
+        TransactionManagerService,
       ],
       exports: [
         ContentRepository,
         MovieRepository,
         VideoRepository,
         EpisodeRepository,
+        TransactionManagerService,
       ],
     };
   }

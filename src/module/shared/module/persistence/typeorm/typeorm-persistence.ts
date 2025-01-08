@@ -4,8 +4,6 @@ import { ConfigModule } from '../../config/config.module';
 import { ConfigService } from '../../config/service/config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmMigrationService } from './service/typeorm-migration.service';
-import { addTransactionalDataSource } from 'typeorm-transactional';
-import { DataSource } from 'typeorm';
 
 interface ForRootOptions {
   migrations?: string[];
@@ -23,7 +21,7 @@ export class TypeOrmPersistenceModule {
           useFactory: async (configService: ConfigService) => {
             return {
               type: 'postgres',
-              logging: true,
+              logging: false,
               autoLoadEntities: false,
               synchronize: false,
               migrationsTableName: 'typeorm_migrations',
@@ -31,13 +29,6 @@ export class TypeOrmPersistenceModule {
               ...configService.get('database'),
               ...options,
             };
-          },
-          async dataSourceFactory(options) {
-            if (!options) {
-              throw new Error('Invalid options passed');
-            }
-
-            return addTransactionalDataSource(new DataSource(options));
           },
         }),
       ],

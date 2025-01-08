@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 import { Content } from '@contentModule/persistence/entity/content.entity';
 import { DefaultTypeOrmRepository } from '@sharedModule/persistence/typeorm/repository/default-typeorm.repository';
 import { MovieContentModel } from '@contentModule/core/model/movie-content.model';
@@ -7,8 +7,8 @@ import { TvShowContentModel } from '@contentModule/core/model/tv-show-content.mo
 
 @Injectable()
 export class ContentRepository extends DefaultTypeOrmRepository<Content> {
-  constructor(@Inject(DataSource) readonly dataSource: DataSource) {
-    super(Content, dataSource);
+  constructor(readonly entityManager: EntityManager) {
+    super(Content, entityManager);
   }
 
   async saveMovie(entity: MovieContentModel): Promise<MovieContentModel> {
