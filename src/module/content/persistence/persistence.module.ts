@@ -10,7 +10,6 @@ import { ContentRepository } from './repository/content.repository';
 import { MovieRepository } from './repository/movie.repository';
 import { VideoRepository } from './repository/video.repository';
 import { EpisodeRepository } from './repository/episode.repository';
-import { TransactionManagerService } from './transaction-manager.service';
 import { DataSource } from 'typeorm';
 
 export class PersistenceModule {
@@ -53,14 +52,12 @@ export class PersistenceModule {
           },
           inject: [DataSource],
         },
-        TransactionManagerService,
       ],
       exports: [
         ContentRepository,
         MovieRepository,
         VideoRepository,
         EpisodeRepository,
-        TransactionManagerService,
       ],
     };
   }

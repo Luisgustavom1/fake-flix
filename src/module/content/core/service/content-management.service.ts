@@ -17,7 +17,6 @@ import { VideoProfanityFilterService } from './video-profanity-filter.service';
 import { AgeRecommendationService } from './age-recommendation.service';
 import { MovieContentModel } from '../model/movie-content.model';
 import { TvShowContentModel } from '../model/tv-show-content.model';
-import { TransactionManagerService } from '../../persistence/transaction-manager.service';
 
 export interface CreateMovieData {
   title: string;
@@ -36,7 +35,6 @@ export class ContentManagementService {
     private readonly videoMetadataService: VideoMetadataService,
     private readonly videoProfanityFilterService: VideoProfanityFilterService,
     private readonly ageRecommendationService: AgeRecommendationService,
-    private readonly transactionManagerService: TransactionManagerService,
   ) {}
 
   async createMovie(createMovieData: CreateMovieData) {
@@ -153,14 +151,10 @@ export class ContentManagementService {
 
     content.ageRecommendation = ageRecommendation;
 
-    return await this.transactionManagerService.executeWithinTransaction(
-      async () => {
-        //not transactional
-        await this.contentRepository.saveTvShow(content);
-        await this.episodeRepository.save(episode);
+    content.tvShow.episodes = [episode];
 
-        return episode;
-      },
-    );
+    await this.contentRepository.saveTvShow(content);
+
+    return episode;
   }
 }
