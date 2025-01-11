@@ -3,7 +3,6 @@ import { FILES_DEST } from '@contentModule/http/rest/controller/admin-movie.cont
 import * as fs from 'fs';
 import * as request from 'supertest';
 import * as nock from 'nock';
-import { ContentManagementService } from '@contentModule/core/service/content-management.service';
 import {
   searchKeyword,
   searchMovie,
@@ -12,19 +11,18 @@ import { ContentModule } from '@contentModule/content.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
+import { CreateMovieUseCase } from '@contentModule/application/use-case/create-movie.use-case';
 
 describe('VideoController (e2e)', () => {
   let app: INestApplication;
-  let contentManagementService: ContentManagementService;
+  let createMovieUseCase: CreateMovieUseCase;
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([ContentModule]);
     app = nestTestSetup.app;
 
-    contentManagementService =
-      nestTestSetup.module.get<ContentManagementService>(
-        ContentManagementService,
-      );
+    createMovieUseCase =
+      nestTestSetup.module.get<CreateMovieUseCase>(CreateMovieUseCase);
   });
 
   beforeEach(async () => {
@@ -63,10 +61,10 @@ describe('VideoController (e2e)', () => {
         ],
       });
 
-      const sampleVideo = await contentManagementService.createMovie({
+      const sampleVideo = await createMovieUseCase.execute({
         title: 'Sample video',
         description: 'Sample description',
-        url: './test/fixtures/sample.mp4',
+        videoUrl: './test/fixtures/sample.mp4',
         thumbnailUrl: './test/fixtures/sample.jpg',
         sizeInKb: 1430145,
       });

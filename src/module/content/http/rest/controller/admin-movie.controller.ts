@@ -14,9 +14,9 @@ import { diskStorage } from 'multer';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 import type { Request } from 'express';
-import { ContentManagementService } from '@contentModule/core/service/content-management.service';
 import { RestResponseInterceptor } from '../interceptor/rest-response.interceptor';
 import { CreateVideoResponseDTO } from '../dto/response/create-video-response-dto';
+import { CreateMovieUseCase } from '@contentModule/application/use-case/create-movie.use-case';
 
 export const FILES_DEST = './uploads';
 const MAX_THUMBNAIL_SIZE = 1024 * 1024 * 10; // 10MB
@@ -24,9 +24,7 @@ const MAX_VIDEO_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
 
 @Controller('admin')
 export class AdminMovieController {
-  constructor(
-    private readonly contentManagementService: ContentManagementService,
-  ) {}
+  constructor(private readonly createMovieUseCase: CreateMovieUseCase) {}
 
   @Post('movie')
   @HttpCode(HttpStatus.CREATED)
@@ -81,10 +79,10 @@ export class AdminMovieController {
       throw new BadRequestException('Thumbnail file is too large');
     }
 
-    const newContent = await this.contentManagementService.createMovie({
+    const newContent = await this.createMovieUseCase.execute({
       title: body.title,
       description: body.description,
-      url: videoFile.path,
+      videoUrl: videoFile.path,
       thumbnailUrl: thumbnailFile.path,
       sizeInKb: videoFile.size,
     });

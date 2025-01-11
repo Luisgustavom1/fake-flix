@@ -11,12 +11,14 @@ import {
 import * as path from 'path';
 import * as fs from 'fs';
 import type { Request, Response } from 'express';
-import { MediaPlayerService } from '@contentModule/core/service/media-player.service';
 import { VideoNotFoundException } from '@contentModule/core/exception/video-not-found.exception';
+import { GetStreamingURLUseCase } from '@contentModule/application/use-case/get-streaming-url.use-case';
 
 @Controller('stream')
 export class MediaPlayerController {
-  constructor(private readonly mediaPlayerService: MediaPlayerService) {}
+  constructor(
+    private readonly getStreamingUrlUseCase: GetStreamingURLUseCase,
+  ) {}
 
   @Get(':videoId')
   @Header('Content-Type', 'video/mp4')
@@ -26,7 +28,7 @@ export class MediaPlayerController {
     @Res() res: Response,
   ) {
     try {
-      const videoUrl = await this.mediaPlayerService.prepareStreaming(videoId);
+      const videoUrl = await this.getStreamingUrlUseCase.execute(videoId);
       if (!videoUrl) throw new NotFoundException('Video not found');
 
       const videoPath = path.join('.', videoUrl);

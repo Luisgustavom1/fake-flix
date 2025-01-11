@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ContentManagementService } from '@contentModule/core/service/content-management.service';
-import { MediaPlayerService } from '@contentModule/core/service/media-player.service';
 import { ContentRepository } from '@contentModule/persistence/repository/content.repository';
 import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
 import { PersistenceModule } from '@contentModule/persistence/persistence.module';
@@ -13,6 +11,12 @@ import { AdminTvShowController } from './http/rest/controller/admin-tv-show-cont
 import { AgeRecommendationService } from './core/service/age-recommendation.service';
 import { VideoMetadataService } from './core/service/video-metadata.service';
 import { VideoProfanityFilterService } from './core/service/video-profanity-filter.service';
+import { CreateMovieUseCase } from './application/use-case/create-movie.use-case';
+import { CreateTvShowEpisodeUseCase } from './application/use-case/create-tv-show-episode.use-case';
+import { CreateTvShowUseCase } from './application/use-case/create-tv-show.use-case';
+import { GetStreamingURLUseCase } from './application/use-case/get-streaming-url.use-case';
+import { VideoProcessorService } from './core/service/video-processor.service';
+import { EpisodeLifecycleService } from './core/service/episode-lifecycle.service';
 
 @Module({
   imports: [PersistenceModule.forRoot(), ConfigModule.forRoot()],
@@ -22,15 +26,23 @@ import { VideoProfanityFilterService } from './core/service/video-profanity-filt
     AdminTvShowController,
   ],
   providers: [
-    ContentManagementService,
-    MediaPlayerService,
     ContentRepository,
     VideoRepository,
     ExternalMovieClient,
     HttpClient,
+
+    // services
     AgeRecommendationService,
     VideoMetadataService,
     VideoProfanityFilterService,
+    VideoProcessorService,
+    EpisodeLifecycleService,
+
+    // use cases
+    CreateMovieUseCase,
+    CreateTvShowEpisodeUseCase,
+    CreateTvShowUseCase,
+    GetStreamingURLUseCase,
   ],
 })
 export class ContentModule {}

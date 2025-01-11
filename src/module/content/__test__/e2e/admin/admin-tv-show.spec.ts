@@ -81,7 +81,7 @@ describe('AdminTvShowController (e2e)', () => {
         season: 1,
         number: 1,
         sizeInKb: 1430145,
-        duration: 100,
+        duration: 10,
       };
 
       await request(app.getHttpServer())
