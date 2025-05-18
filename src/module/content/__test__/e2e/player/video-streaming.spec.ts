@@ -12,7 +12,7 @@ import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
-import { videoFactory } from '@testInfra/factory/content/video.factory';
+import { videoFactory } from '@contentModule/__test__/factory/content/video.factory';
 
 describe('VideoController (e2e)', () => {
   let app: INestApplication;
