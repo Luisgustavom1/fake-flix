@@ -13,6 +13,9 @@ export class VideoMetadata extends DefaultEntity<VideoMetadata> {
   @Column({ type: 'integer', nullable: true })
   ageRating: number | null;
 
+  @Column({ type: 'integer' })
+  duration: number;
+
   @Column({ type: 'text', nullable: true })
   ageRatingExplanation: string | null;
 

@@ -9,7 +9,6 @@ import { MediaPlayerController } from '@contentModule/http/rest/controller/media
 import { ExternalMovieClient } from '@contentModule/http/rest/client/external-movie-rating/external-movie-rating.client';
 import { AdminTvShowController } from './http/rest/controller/admin-tv-show-controller';
 import { AgeRecommendationService } from './core/service/age-recommendation.service';
-import { VideoMetadataService } from './core/service/video-metadata.service';
 import { VideoProfanityFilterService } from './core/service/video-profanity-filter.service';
 import { CreateMovieUseCase } from './application/use-case/create-movie.use-case';
 import { CreateTvShowEpisodeUseCase } from './application/use-case/create-tv-show-episode.use-case';
@@ -51,7 +50,6 @@ import { VideoAgeRecommendationAdapter } from './core/adapter/video-recommendati
 
     // services
     AgeRecommendationService,
-    VideoMetadataService,
     VideoProfanityFilterService,
     VideoProcessorService,
     EpisodeLifecycleService,

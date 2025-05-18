@@ -9,13 +9,11 @@ export type NewVideoEntity = Omit<
 export interface VideoEntityProps extends BaseEntityProps {
   url: string;
   sizeInKb: number;
-  duration: number;
 }
 
 export class VideoEntity extends BaseEntity {
   private url: VideoEntityProps['url'];
   private sizeInKb: VideoEntityProps['sizeInKb'];
-  private duration: VideoEntityProps['duration'];
 
   constructor({ id, createdAt, updatedAt, ...rest }: VideoEntityProps) {
     super({ id, createdAt, updatedAt });
@@ -50,7 +48,6 @@ export class VideoEntity extends BaseEntity {
       id: this.id,
       url: this.url,
       sizeInKb: this.sizeInKb,
-      duration: this.duration,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -62,9 +59,5 @@ export class VideoEntity extends BaseEntity {
 
   getSizeInKb() {
     return this.sizeInKb;
-  }
-
-  getDuration() {
-    return this.duration;
   }
 }

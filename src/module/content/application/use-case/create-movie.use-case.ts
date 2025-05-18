@@ -38,7 +38,6 @@ export class CreateMovieUseCase {
         externalRating,
         video: new Video({
           url: createMovieData.videoUrl,
-          duration: 10,
           sizeInKb: createMovieData.sizeInKb,
         }),
       }),

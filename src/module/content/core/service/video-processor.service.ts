@@ -37,9 +37,7 @@ export class VideoProcessorService {
       ageRating: ageRecommendation?.ageRating,
       ageRatingExplanation: ageRecommendation?.explanation,
       ageRatingCategories: ageRecommendation?.categories,
+      duration: 10,
     });
-
-    // TODO: remove this
-    video.duration = 10;
   }
 }

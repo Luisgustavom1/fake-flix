@@ -94,7 +94,7 @@ export class AdminMovieController {
       url: newContent.movie.video.url,
       thumbnailUrl: newContent.movie.thumbnail?.url,
       sizeInKb: newContent.movie.video.sizeInKb,
-      duration: newContent.movie.video.duration,
+      duration: newContent.movie.video.metadata.duration,
       createdAt: newContent.createdAt,
       updatedAt: newContent.updatedAt,
     };

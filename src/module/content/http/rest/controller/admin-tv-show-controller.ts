@@ -122,7 +122,7 @@ export class AdminTvShowController {
       title: createdEpisode.title,
       description: createdEpisode.description,
       videoUrl: createdEpisode.video.url,
-      duration: createdEpisode.video.duration,
+      duration: createdEpisode.video.metadata.duration,
       sizeInKb: createdEpisode.video.sizeInKb,
     };
   }

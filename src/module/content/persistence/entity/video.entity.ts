@@ -12,9 +12,6 @@ export class Video extends DefaultEntity<Video> {
   @Column('int')
   sizeInKb: number;
 
-  @Column('int')
-  duration: number;
-
   @OneToOne(() => Movie, (movie) => movie.video)
   @JoinColumn()
   movie: Movie;
