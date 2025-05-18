@@ -5,6 +5,7 @@ import { createNestApp } from '@testInfra/test-e2e.setup';
 import * as request from 'supertest';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
 
 describe('AdminTvShowController (e2e)', () => {
   let module: TestingModule;
@@ -46,7 +47,7 @@ describe('AdminTvShowController (e2e)', () => {
 
       await request(app.getHttpServer())
         .post('/admin/tv-show')
-        .attach('thumbnail', `./test/fixtures/sample.jpg`)
+        .attach('thumbnail', `${CONTENT_TEST_FIXTURES}/sample.jpg`)
         .field('title', tvShow.title)
         .field('description', tvShow.description)
         .expect(HttpStatus.CREATED)
@@ -69,7 +70,7 @@ describe('AdminTvShowController (e2e)', () => {
 
       const { body } = await request(app.getHttpServer())
         .post('/admin/tv-show')
-        .attach('thumbnail', `./test/fixtures/sample.jpg`)
+        .attach('thumbnail', `${CONTENT_TEST_FIXTURES}/sample.jpg`)
         .field('title', tvShow.title)
         .field('description', tvShow.description)
         .expect(HttpStatus.CREATED);
@@ -86,7 +87,7 @@ describe('AdminTvShowController (e2e)', () => {
 
       await request(app.getHttpServer())
         .post(`/admin/tv-show/${body.id}/upload-episode`)
-        .attach('video', `./test/fixtures/sample.mp4`)
+        .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp4`)
         .field('title', episode.title)
         .field('description', episode.description)
         .field('season', episode.season)
@@ -114,7 +115,7 @@ describe('AdminTvShowController (e2e)', () => {
 
       const { body } = await request(app.getHttpServer())
         .post('/admin/tv-show')
-        .attach('thumbnail', `./test/fixtures/sample.jpg`)
+        .attach('thumbnail', `${CONTENT_TEST_FIXTURES}/sample.jpg`)
         .field('title', tvShow.title)
         .field('description', tvShow.description)
         .expect(HttpStatus.CREATED);
@@ -134,7 +135,7 @@ describe('AdminTvShowController (e2e)', () => {
        */
       await request(app.getHttpServer())
         .post(`/admin/tv-show/${body.id}/upload-episode`)
-        .attach('video', `./test/fixtures/sample.mp4`)
+        .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp4`)
         .field('title', episode.title)
         .field('description', episode.description)
         .field('season', episode.season)
@@ -143,7 +144,7 @@ describe('AdminTvShowController (e2e)', () => {
 
       await request(app.getHttpServer())
         .post(`/admin/tv-show/${body.id}/upload-episode`)
-        .attach('video', `./test/fixtures/sample.mp4`)
+        .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp4`)
         .field('title', episode.title)
         .field('description', episode.description)
         .field('season', episode.season)

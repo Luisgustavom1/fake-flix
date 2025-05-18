@@ -11,7 +11,7 @@ import { ContentModule } from '@contentModule/content.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
-import { TestingModule } from '@nestjs/testing';
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
 
 describe('VideoUploadController (e2e)', () => {
   let app: INestApplication;
@@ -65,8 +65,8 @@ describe('VideoUploadController (e2e)', () => {
 
       await request(app.getHttpServer())
         .post('/admin/movie')
-        .attach('thumbnail', './test/fixtures/sample.jpg')
-        .attach('video', './test/fixtures/sample.mp4')
+        .attach('thumbnail', `${CONTENT_TEST_FIXTURES}/sample.jpg`)
+        .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp4`)
         .field('title', expectedVideo.title)
         .field('description', expectedVideo.description)
         .expect(HttpStatus.CREATED)
@@ -81,7 +81,7 @@ describe('VideoUploadController (e2e)', () => {
     it('throws an error when the thumbnail is not provided', async () => {
       await request(app.getHttpServer())
         .post('/admin/movie')
-        .attach('video', './test/fixtures/sample.mp4')
+        .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp4`)
         .field('title', 'Test video')
         .field('description', 'Test description')
         .expect(HttpStatus.BAD_REQUEST)
@@ -97,7 +97,7 @@ describe('VideoUploadController (e2e)', () => {
     it('does not allow non mp4 files', async () => {
       await request(app.getHttpServer())
         .post('/admin/movie')
-        .attach('video', './test/fixtures/sample.mp3')
+        .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp3`)
         .field('title', 'Test video')
         .field('description', 'Test description')
         .expect(HttpStatus.BAD_REQUEST)

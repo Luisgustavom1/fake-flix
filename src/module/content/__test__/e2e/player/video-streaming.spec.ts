@@ -12,6 +12,7 @@ import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
 import { CreateMovieUseCase } from '@contentModule/application/use-case/create-movie.use-case';
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
 
 describe('VideoController (e2e)', () => {
   let app: INestApplication;
@@ -64,8 +65,8 @@ describe('VideoController (e2e)', () => {
       const sampleVideo = await createMovieUseCase.execute({
         title: 'Sample video',
         description: 'Sample description',
-        videoUrl: './test/fixtures/sample.mp4',
-        thumbnailUrl: './test/fixtures/sample.jpg',
+        videoUrl: `${CONTENT_TEST_FIXTURES}/sample.mp4`,
+        thumbnailUrl: `${CONTENT_TEST_FIXTURES}/sample.jpg`,
         sizeInKb: 1430145,
       });
 
