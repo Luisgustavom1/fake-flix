@@ -2,6 +2,7 @@ import { DefaultEntity } from '@sharedModule/persistence/typeorm/entity/default.
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { Movie } from './movie.entity';
 import { Episode } from './episode.entity';
+import { VideoMetadata } from './video-metadata.entity';
 
 @Entity({ name: 'Video' })
 export class Video extends DefaultEntity<Video> {
@@ -21,4 +22,9 @@ export class Video extends DefaultEntity<Video> {
   @OneToOne(() => Episode, (episode) => episode.video)
   @JoinColumn()
   episode: Episode;
+
+  @OneToOne(() => VideoMetadata, (metadata) => metadata.video, {
+    cascade: true,
+  })
+  metadata: VideoMetadata;
 }

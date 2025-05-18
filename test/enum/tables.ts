@@ -8,4 +8,5 @@ export enum Tables {
   Thumbnail = 'Thumbnail',
   Episode = 'Episode',
   TvShow = 'TvShow',
+  VideoMetadata = 'VideoMetadata',
 }

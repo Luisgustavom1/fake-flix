@@ -11,6 +11,7 @@ import { MovieRepository } from './repository/movie.repository';
 import { VideoRepository } from './repository/video.repository';
 import { EpisodeRepository } from './repository/episode.repository';
 import { DataSource } from 'typeorm';
+import { VideoMetadata } from './entity/video-metadata.entity';
 
 export class PersistenceModule {
   static forRoot(opts?: { migrations?: string[] }): DynamicModule {
@@ -20,7 +21,15 @@ export class PersistenceModule {
       imports: [
         TypeOrmPersistenceModule.forRoot({
           migrations,
-          entities: [Content, Movie, Thumbnail, Video, TvShow, Episode],
+          entities: [
+            Content,
+            Movie,
+            Thumbnail,
+            Video,
+            TvShow,
+            Episode,
+            VideoMetadata,
+          ],
         }),
       ],
       providers: [
