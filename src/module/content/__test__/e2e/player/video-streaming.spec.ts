@@ -11,19 +11,15 @@ import { ContentModule } from '@contentModule/content.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
-import { CreateMovieUseCase } from '@contentModule/application/use-case/create-movie.use-case';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
+import { videoFactory } from '@testInfra/factory/content/video.factory';
 
 describe('VideoController (e2e)', () => {
   let app: INestApplication;
-  let createMovieUseCase: CreateMovieUseCase;
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([ContentModule]);
     app = nestTestSetup.app;
-
-    createMovieUseCase =
-      nestTestSetup.module.get<CreateMovieUseCase>(CreateMovieUseCase);
   });
 
   beforeEach(async () => {
@@ -34,6 +30,7 @@ describe('VideoController (e2e)', () => {
 
   afterEach(async () => {
     await testDbClient(Tables.Video).del();
+    await testDbClient(Tables.VideoMetadata).del();
     await testDbClient(Tables.Movie).del();
     await testDbClient(Tables.Content).del();
     nock.cleanAll();
@@ -62,20 +59,17 @@ describe('VideoController (e2e)', () => {
         ],
       });
 
-      const sampleVideo = await createMovieUseCase.execute({
-        title: 'Sample video',
-        description: 'Sample description',
-        videoUrl: `${CONTENT_TEST_FIXTURES}/sample.mp4`,
-        thumbnailUrl: `${CONTENT_TEST_FIXTURES}/sample.jpg`,
-        sizeInKb: 1430145,
+      const sampleVideo = videoFactory.build({
+        url: `${CONTENT_TEST_FIXTURES}/sample.mp4`,
       });
+      await testDbClient(Tables.Video).insert(sampleVideo);
 
       const start = 20;
       const fileSize = 1430145;
       const range = `bytes=${start}-${fileSize - 1}`;
 
       const response = await request(app.getHttpServer())
-        .get(`/stream/${sampleVideo.movie.video.id}`)
+        .get(`/stream/${sampleVideo.id}`)
         .set('Range', range)
         .expect(HttpStatus.PARTIAL_CONTENT);
 
