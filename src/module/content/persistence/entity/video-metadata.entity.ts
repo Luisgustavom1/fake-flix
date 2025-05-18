@@ -21,7 +21,7 @@ export class VideoMetadata extends DefaultEntity<VideoMetadata> {
 
   @OneToOne(() => Video, (video) => video.metadata)
   @JoinColumn({
-    name: 'video_id',
+    name: 'videoId',
     referencedColumnName: 'id',
   })
   video: Video;

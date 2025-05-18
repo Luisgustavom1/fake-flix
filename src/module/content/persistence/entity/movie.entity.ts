@@ -22,4 +22,7 @@ export class Movie extends DefaultEntity<Movie> {
     cascade: true,
   })
   thumbnail: Thumbnail;
+
+  @Column({ type: 'uuid', nullable: true })
+  contentId: string | null;
 }

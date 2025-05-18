@@ -17,6 +17,10 @@ import { CreateTvShowUseCase } from './application/use-case/create-tv-show.use-c
 import { GetStreamingURLUseCase } from './application/use-case/get-streaming-url.use-case';
 import { VideoProcessorService } from './core/service/video-processor.service';
 import { EpisodeLifecycleService } from './core/service/episode-lifecycle.service';
+import { VideoSummaryGeneratorAdapter } from './core/adapter/video-summary-generator.adapter.interface';
+import { GeminiTextExtractorClient } from '@contentModule/http/rest/client/gemini/gemini-text-extractor.client';
+import { VideoTranscriptGeneratorAdapter } from './core/adapter/video-transcript-generator.adapter.interface';
+import { VideoAgeRecommendationAdapter } from './core/adapter/video-recommendation.adapter.interface';
 
 @Module({
   imports: [PersistenceModule.forRoot(), ConfigModule.forRoot()],
@@ -26,6 +30,20 @@ import { EpisodeLifecycleService } from './core/service/episode-lifecycle.servic
     AdminTvShowController,
   ],
   providers: [
+    // adapters
+    {
+      provide: VideoSummaryGeneratorAdapter,
+      useClass: GeminiTextExtractorClient,
+    },
+    {
+      provide: VideoTranscriptGeneratorAdapter,
+      useClass: GeminiTextExtractorClient,
+    },
+    {
+      provide: VideoAgeRecommendationAdapter,
+      useClass: GeminiTextExtractorClient,
+    },
+
     ContentRepository,
     VideoRepository,
     ExternalMovieClient,

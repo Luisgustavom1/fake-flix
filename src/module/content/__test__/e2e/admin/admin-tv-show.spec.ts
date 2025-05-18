@@ -3,9 +3,11 @@ import { TestingModule } from '@nestjs/testing';
 
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import * as request from 'supertest';
+import * as nock from 'nock';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
+import { mockGenAi } from '@testInfra/utils/http/rest/client/external-movie-rating';
 
 describe('AdminTvShowController (e2e)', () => {
   let module: TestingModule;
@@ -24,11 +26,13 @@ describe('AdminTvShowController (e2e)', () => {
   });
 
   afterEach(async () => {
+    await testDbClient(Tables.VideoMetadata).del();
     await testDbClient(Tables.Video).del();
     await testDbClient(Tables.Episode).del();
     await testDbClient(Tables.TvShow).del();
     await testDbClient(Tables.Thumbnail).del();
     await testDbClient(Tables.Content).del();
+    nock.cleanAll();
   });
 
   afterAll(async () => {
@@ -85,6 +89,33 @@ describe('AdminTvShowController (e2e)', () => {
         duration: 10,
       };
 
+      mockGenAi([
+        {
+          text: JSON.stringify({
+            responseText: 'This is a test video transcript.',
+          }),
+        },
+      ]);
+
+      mockGenAi([
+        {
+          text: JSON.stringify({
+            responseText: 'This is a test video summary.',
+          }),
+        },
+      ]);
+
+      mockGenAi([
+        {
+          text: JSON.stringify({
+            ageRating: 12,
+            explanation:
+              'The video contains mild language and thematic elements appropriate for viewers 12 and above.',
+            categories: ['language', 'thematic elements'],
+          }),
+        },
+      ]);
+
       await request(app.getHttpServer())
         .post(`/admin/tv-show/${body.id}/upload-episode`)
         .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp4`)
@@ -129,6 +160,33 @@ describe('AdminTvShowController (e2e)', () => {
         sizeInKb: 1430145,
         duration: 100,
       };
+
+      mockGenAi([
+        {
+          text: JSON.stringify({
+            responseText: 'This is a test video transcript.',
+          }),
+        },
+      ]);
+
+      mockGenAi([
+        {
+          text: JSON.stringify({
+            responseText: 'This is a test video summary.',
+          }),
+        },
+      ]);
+
+      mockGenAi([
+        {
+          text: JSON.stringify({
+            ageRating: 12,
+            explanation:
+              'The video contains mild language and thematic elements appropriate for viewers 12 and above.',
+            categories: ['language', 'thematic elements'],
+          }),
+        },
+      ]);
 
       /**
        * This can also be done with a test factory

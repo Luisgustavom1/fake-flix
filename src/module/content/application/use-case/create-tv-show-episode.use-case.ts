@@ -59,7 +59,7 @@ export class CreateTvShowEpisodeUseCase {
 
     await Promise.all([
       this.ageRecommendationService.setAgeRecommendationForContent(content),
-      this.videoProcessorService.processMetadataAndSecurity(video),
+      this.videoProcessorService.processMetadataAndModeration(video),
     ]);
 
     episode.video = video;

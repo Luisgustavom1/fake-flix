@@ -1,5 +1,4 @@
 import {
-  DataSource,
   EntityManager,
   EntityTarget,
   FindOneOptions,
