@@ -1,48 +1,14 @@
-import { SubscriptionStatus } from '@billingModule/core/model/subscription.model';
+import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
 import { DefaultResponseDto } from '@billingModule/http/rest/dto/response/default-response.dto';
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
-  IsString,
   IsUUID,
 } from 'class-validator';
-
-class PlanResponseDto {
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly name: string;
-
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly description?: string;
-
-  @IsNumber()
-  @Expose()
-  @IsNotEmpty()
-  readonly amount: number;
-
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly currency: string;
-
-  @IsString()
-  @Expose()
-  @IsNotEmpty()
-  readonly interval: string;
-
-  @IsNumber()
-  @Expose()
-  @IsOptional()
-  readonly trialPeriod: number | null;
-}
 
 export class SubscriptionResponseDto extends DefaultResponseDto {
   @IsUUID(4)
@@ -74,8 +40,4 @@ export class SubscriptionResponseDto extends DefaultResponseDto {
   @Expose()
   @IsNotEmpty()
   readonly autoRenew: boolean;
-
-  @Expose()
-  @Type(() => PlanResponseDto)
-  readonly plan: PlanResponseDto;
 }

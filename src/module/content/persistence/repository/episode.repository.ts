@@ -1,12 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource, EntityManager } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { DefaultTypeOrmRepository } from '@sharedModule/persistence/typeorm/repository/default-typeorm.repository';
 import { Episode } from '../entity/episode.entity';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Injectable()
 export class EpisodeRepository extends DefaultTypeOrmRepository<Episode> {
-  constructor(readonly entityManager: EntityManager) {
-    super(Episode, entityManager);
+  constructor(
+    @InjectDataSource('content')
+    private readonly dataSource: DataSource,
+  ) {
+    super(Episode, dataSource.manager);
   }
 
   async findLastEpisodeByTvShowAndSeason(

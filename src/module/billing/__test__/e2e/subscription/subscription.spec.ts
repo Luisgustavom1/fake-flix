@@ -1,29 +1,23 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 import { BillingModule } from '@billingModule/billing.module';
-import { PlanInterval, PlanModel } from '@billingModule/core/model/plan.model';
-import { SubscriptionStatus } from '@billingModule/core/model/subscription.model';
-import { PlanRepository } from '@billingModule/persistence/repository/plan.repository';
-import { SubscriptionRepository } from '@billingModule/persistence/repository/subscription.repository';
 import { randomUUID } from 'crypto';
 import * as request from 'supertest';
 import { createNestApp } from '@testInfra/test-e2e.setup';
+import { testDbClient } from '@testInfra/knex.database';
+import { Tables } from '@testInfra/enum/tables';
+import { planFactory } from '@identityModule/__test__/factory/plan.test-factory';
+import { PlanInterval } from '@billingModule/core/enum/plan-interval.enum';
+import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
 
 describe('Subscription e2e test', () => {
   let app: INestApplication;
   let module: TestingModule;
-  let planRepository: PlanRepository;
-  let subscriptionRepository: SubscriptionRepository;
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([BillingModule]);
     app = nestTestSetup.app;
     module = nestTestSetup.module;
-
-    planRepository = module.get<PlanRepository>(PlanRepository);
-    subscriptionRepository = module.get<SubscriptionRepository>(
-      SubscriptionRepository,
-    );
   });
 
   beforeEach(async () => {
@@ -33,8 +27,8 @@ describe('Subscription e2e test', () => {
   });
 
   afterEach(async () => {
-    await subscriptionRepository.deleteAll();
-    await planRepository.deleteAll();
+    await testDbClient(Tables.Subscription).delete();
+    await testDbClient(Tables.Plan).delete();
   });
 
   afterAll(async () => {
@@ -44,15 +38,15 @@ describe('Subscription e2e test', () => {
   });
 
   it('creates a subscription', async () => {
-    const plan = PlanModel.create({
+    const plan = planFactory.build({
       name: 'Basic',
       description: 'Basic montly plan',
       currency: 'USD',
-      amount: '10',
+      amount: 10,
       interval: PlanInterval.Month,
       trialPeriod: 7,
     });
-    await planRepository.create(plan);
+    await testDbClient(Tables.Plan).insert(plan);
     const res = await request(app.getHttpServer())
       .post('/subscription')
       .send({ planId: plan.id });
@@ -66,6 +60,7 @@ describe('Subscription e2e test', () => {
       planId: plan.id,
       status: SubscriptionStatus.Active,
       startDate: expect.any(String),
+      endDate: null,
       autoRenew: true,
     });
   });

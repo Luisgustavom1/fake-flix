@@ -29,7 +29,7 @@ export class SubscriptionController {
       //TODO validate
       return plainToInstance(
         SubscriptionResponseDto,
-        { ...createdSubscription, ...{ plan: createdSubscription.Plan } },
+        { ...createdSubscription, ...{ plan: createdSubscription.plan } },
         {
           excludeExtraneousValues: true,
         },
@@ -38,7 +38,6 @@ export class SubscriptionController {
       if (error instanceof NotFoundDomainException) {
         throw new NotFoundException(error.message);
       }
-      console.error('Error creating subscription', error);
       throw new InternalServerErrorException();
     }
   }

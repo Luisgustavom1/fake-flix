@@ -1,23 +1,22 @@
 import { Module } from '@nestjs/common';
-import { PlanRepository } from '@billingModule/persistence/repository/plan.repository';
-import { SubscriptionRepository } from '@billingModule/persistence/repository/subscription.repository';
 import { TypeOrmPersistenceModule } from '@sharedModule/persistence/typeorm/typeorm-persistence.module';
-import { ConfigService } from '@sharedModule/config/service/config.service';
 import { dataSourceOptionsFactory } from './typeorm-datasource.factory';
+import { UserRepository } from './repository/user.repository';
+import { ConfigService } from '@sharedModule/config/service/config.service';
 import { ConfigModule } from '@sharedModule/config/config.module';
 
 @Module({
   imports: [
     TypeOrmPersistenceModule.forRoot({
+      name: 'identity',
       imports: [ConfigModule.forRoot()],
-      name: 'billing',
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return dataSourceOptionsFactory(configService);
       },
     }),
   ],
-  providers: [PlanRepository, SubscriptionRepository],
-  exports: [PlanRepository, SubscriptionRepository],
+  providers: [UserRepository],
+  exports: [UserRepository],
 })
-export class BillingPersistenceModule {}
+export class IdentityPersistenceModule {}

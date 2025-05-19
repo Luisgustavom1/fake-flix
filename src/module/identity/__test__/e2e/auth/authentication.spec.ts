@@ -1,13 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
-import { UserModel } from '@identityModule/core/model/user.model';
 import { UserManagementService } from '@identityModule/core/service/user-management.service';
 import * as request from 'supertest';
 import { IdentityModule } from '@identityModule/identity.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
-import { planFactory } from '@testInfra/factory/identity/plan.test-factory';
-import { subscriptionFactory } from '@testInfra/factory/identity/subscription.test-factory';
+import { planFactory } from '@identityModule/__test__/factory/plan.test-factory';
+import { subscriptionFactory } from '@identityModule/__test__/factory/subscription.test-factory';
 import { Tables } from '@testInfra/enum/tables';
 import * as nock from 'nock';
 
@@ -40,19 +39,17 @@ describe('AuthResolver (e2e)', () => {
   });
 
   describe('signIn mutation', () => {
-    it.skip('returns the authenticated user - USING HTTP for module to module calls', async () => {
+    it('returns the authenticated user - USING HTTP for module to module calls', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123',
       };
-      const createdUser = await userManagementService.create(
-        UserModel.create({
-          firstName: 'John',
-          lastName: 'Doe',
-          email: signInInput.email,
-          password: signInInput.password,
-        }),
-      );
+      const createdUser = await userManagementService.create({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: signInInput.email,
+        password: signInInput.password,
+      });
       nock('https://localhost:3000', {
         encodedQueryParams: true,
         reqheaders: {
@@ -60,12 +57,12 @@ describe('AuthResolver (e2e)', () => {
         },
       })
         .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-        .get(`/subscription/user/${createdUser.id}`)
+        .get(`/subscription/user/${createdUser.id}/active`)
         .reply(200, {
-          status: 'ACTIVE',
+          isActive: true,
         });
 
-      const accessTokenResponse = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/graphql')
         .send({
           query: `
@@ -78,41 +75,23 @@ describe('AuthResolver (e2e)', () => {
               }
             }
           `,
-        });
-      const response = await request(app.getHttpServer())
-        .post('/graphql')
-        .set(
-          'Authorization',
-          `Bearer ${accessTokenResponse.body.data.signIn.accessToken}`,
-        )
-        .send({
-          query: `
-            query {
-              getProfile {
-                email
-              }
-            }
-          `,
-        });
+        })
+        .expect(200);
 
-      const { email } = response.body.data.getProfile;
-
-      expect(email).toEqual(signInInput.email);
+      expect(response.body.data.signIn.accessToken).toBeDefined();
     });
 
-    it.skip('returns accessToken for valid credentials', async () => {
+    it('returns unauthorized if the user does not exist', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123',
       };
-      const createdUser = await userManagementService.create(
-        UserModel.create({
-          firstName: 'John',
-          lastName: 'Doe',
-          email: signInInput.email,
-          password: signInInput.password,
-        }),
-      );
+      const createdUser = await userManagementService.create({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: signInInput.email,
+        password: signInInput.password,
+      });
 
       const plan = planFactory.build();
       const subscription = subscriptionFactory.build({
@@ -139,14 +118,34 @@ describe('AuthResolver (e2e)', () => {
         })
         .expect(200);
 
-      expect(response.body.data.signIn.accessToken).toBeDefined();
+      expect(response.body.errors[0].message).toEqual(
+        'Cannot authorize user: johndoe@example.com',
+      );
     });
 
-    it('returns unauthorized if the user does not exist', async () => {
+    it('returns unauthorized if the subscription is not active', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123',
       };
+
+      const createdUser = await userManagementService.create({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: signInInput.email,
+        password: signInInput.password,
+      });
+      nock('https://localhost:3000', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true,
+        },
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`/subscription/user/${createdUser.id}/active`)
+        .reply(200, {
+          isActive: false,
+        });
 
       const response = await request(app.getHttpServer())
         .post('/graphql')
@@ -163,23 +162,38 @@ describe('AuthResolver (e2e)', () => {
           `,
         })
         .expect(200);
-      expect(response.body.errors[0].message).toEqual('Cannot authorize user');
+
+      expect(response.body.errors[0].message).toEqual(
+        'User subscription is not active: johndoe@example.com',
+      );
     });
   });
+
   describe('getProfile query', () => {
-    it.skip('returns the authenticated user', async () => {
+    //Used in examples about module to module calls, its skiped because the default is to use local calls
+    it('returns the authenticated user - USING HTTP for module to module calls', async () => {
       const signInInput = {
         email: 'johndoe@example.com',
         password: 'password123',
       };
-      const createdUser = await userManagementService.create(
-        UserModel.create({
-          firstName: 'John',
-          lastName: 'Doe',
-          email: signInInput.email,
-          password: signInInput.password,
-        }),
-      );
+      const createdUser = await userManagementService.create({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: signInInput.email,
+        password: signInInput.password,
+      });
+
+      nock('https://localhost:3000', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true,
+        },
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`/subscription/user/${createdUser.id}/active`)
+        .reply(200, {
+          isActive: true,
+        });
 
       const plan = planFactory.build();
       const subscription = subscriptionFactory.build({

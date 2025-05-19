@@ -20,9 +20,10 @@ import { VideoSummaryGeneratorAdapter } from './core/adapter/video-summary-gener
 import { GeminiTextExtractorClient } from '@contentModule/http/rest/client/gemini/gemini-text-extractor.client';
 import { VideoTranscriptGeneratorAdapter } from './core/adapter/video-transcript-generator.adapter.interface';
 import { VideoAgeRecommendationAdapter } from './core/adapter/video-recommendation.adapter.interface';
+import { HttpClientModule } from '@sharedModule/http/client/http.client module';
 
 @Module({
-  imports: [PersistenceModule.forRoot(), ConfigModule.forRoot()],
+  imports: [PersistenceModule, ConfigModule.forRoot(), HttpClientModule],
   controllers: [
     AdminMovieController,
     MediaPlayerController,

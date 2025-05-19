@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UserModel } from '@identityModule/core/model/user.model';
 import { UserRepository } from '@identityModule/persistence/repository/user.repository';
 import * as bcrypt from 'bcrypt';
+import { User } from '@identityModule/persistence/entity/user.entity';
 
 export interface CreateUserDto {
   email: string;
@@ -17,7 +17,7 @@ export const PASSWORD_HASH_SALT = 10;
 export class UserManagementService {
   constructor(private readonly userRepository: UserRepository) {}
   async create(user: CreateUserDto) {
-    const newUser = UserModel.create({
+    const newUser = new User({
       ...user,
       password: await bcrypt.hash(user.password, PASSWORD_HASH_SALT),
     });
@@ -26,6 +26,6 @@ export class UserManagementService {
   }
 
   async getUserById(id: string) {
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findOneById(id);
   }
 }

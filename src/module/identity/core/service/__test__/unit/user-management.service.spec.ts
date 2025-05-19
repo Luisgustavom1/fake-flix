@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserManagementService } from '@identityModule/core/service/user-management.service';
 import { UserRepository } from '@identityModule/persistence/repository/user.repository';
 import { ConfigModule } from '@sharedModule/config/config.module';
-import { PrismaService } from '@sharedModule/persistence/prisma/prisma.service';
 
 describe('UserManagementService', () => {
   let service: UserManagementService;
@@ -11,7 +10,7 @@ describe('UserManagementService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot()],
-      providers: [UserManagementService, UserRepository, PrismaService],
+      providers: [UserManagementService, UserRepository],
     }).compile();
 
     service = module.get<UserManagementService>(UserManagementService);

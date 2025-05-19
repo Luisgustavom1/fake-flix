@@ -8,14 +8,12 @@ import {
   AuthService,
   jwtConstants,
 } from '@identityModule/core/service/authentication.service';
-import { PersistenceModule } from '@sharedModule/persistence/prisma/persistence.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { BillingSubscriptionRepository } from '@identityModule/persistence/repository/external/billing-subscription.repository';
 import { DomainModuleIntegration } from '@sharedModule/integration/interface/domain-module-integration';
 import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
 import { BillingSubscriptionProvider } from '@billingModule/core/integration/provider/billing-subscription-status.provider';
-import { BillingModule } from '@billingModule/billing.module';
+import { IdentityPersistenceModule } from './persistence/identity-persistence.module';
 
 @Module({
   imports: [
@@ -23,13 +21,12 @@ import { BillingModule } from '@billingModule/billing.module';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60m' },
     }),
-    PersistenceModule,
+    IdentityPersistenceModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: true,
       driver: ApolloDriver,
     }),
     DomainModuleIntegration,
-    BillingModule,
   ],
   providers: [
     AuthService,
@@ -37,7 +34,6 @@ import { BillingModule } from '@billingModule/billing.module';
     UserResolver,
     UserManagementService,
     UserRepository,
-    BillingSubscriptionRepository,
     {
       provide: BillingSubscriptionApi,
       useExisting: BillingSubscriptionProvider,
