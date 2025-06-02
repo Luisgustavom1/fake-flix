@@ -9,6 +9,7 @@ import { planFactory } from '@identityModule/__test__/factory/plan.test-factory'
 import { subscriptionFactory } from '@identityModule/__test__/factory/subscription.test-factory';
 import { Tables } from '@testInfra/enum/tables';
 import * as nock from 'nock';
+import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication;
@@ -96,7 +97,7 @@ describe('AuthResolver (e2e)', () => {
       const plan = planFactory.build();
       const subscription = subscriptionFactory.build({
         planId: plan.id,
-        status: 'ACTIVE' as any,
+        status: SubscriptionStatus.Active,
         userId: createdUser.id,
       });
       await testDbClient(Tables.Plan).insert(plan);
@@ -198,7 +199,7 @@ describe('AuthResolver (e2e)', () => {
       const plan = planFactory.build();
       const subscription = subscriptionFactory.build({
         planId: plan.id,
-        status: 'ACTIVE' as any,
+        status: SubscriptionStatus.Active,
         userId: createdUser.id,
       });
       await testDbClient(Tables.Plan).insert(plan);

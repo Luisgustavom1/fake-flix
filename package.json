@@ -19,9 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest.e2e.ts --runInBand",
     
-    "content:db:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/module/content/persistence/migration/migration -d ./src/module/content/persistence/typeorm-datasource.ts",
-    "content:db:migrate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./src/module/content/persistence/typeorm-datasource.ts",
-    "content:db:drop": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js schema:drop -d ./src/module/content/persistence/migration.datasource.ts",
+    "content:db:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/module/content/persistence/migration/migration -d src/module/content/persistence/typeorm-datasource.ts",
+    "content:db:migrate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/module/content/persistence/typeorm-datasource.ts",
+    "content:db:drop": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js schema:drop -d src/module/content/persistence/typeorm-datasource.ts",
     
     "identity:db:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate src/module/identity/persistence/migration/migration -d src/module/identity/persistence/typeorm-datasource.ts",
     "identity:db:migrate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/module/identity/persistence/typeorm-datasource.ts",

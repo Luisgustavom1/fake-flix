@@ -56,7 +56,7 @@ describe('Subscription e2e test', () => {
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       deletedAt: null,
-      userId: 'user-id',
+      userId: 'fake-user-id',
       planId: plan.id,
       status: SubscriptionStatus.Active,
       startDate: expect.any(String),
