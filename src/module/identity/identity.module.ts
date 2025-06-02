@@ -14,6 +14,7 @@ import { DomainModuleIntegration } from '@sharedModule/integration/interface/dom
 import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
 import { BillingSubscriptionProvider } from '@billingModule/core/integration/provider/billing-subscription-status.provider';
 import { IdentityPersistenceModule } from './persistence/identity-persistence.module';
+import { BillingModule } from '@billingModule/billing.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { IdentityPersistenceModule } from './persistence/identity-persistence.mo
       driver: ApolloDriver,
     }),
     DomainModuleIntegration,
+    BillingModule,
   ],
   providers: [
     AuthService,

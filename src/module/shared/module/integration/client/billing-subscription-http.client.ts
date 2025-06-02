@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { BillingSubscriptionApi } from '../interface/billing-integration.interface';
 import { HttpClient } from '@sharedModule/http/client/http.client';
-import { ConfigService } from '@nestjs/config';
 import { BillingApiSubscriptionStatusResponseDto } from '../http/dto/response/billing-api-subscription-status.dto';
+import { ConfigService } from '@sharedModule/config/service/config.service';
 
 @Injectable()
 export class BillingSubscriptionHttpClient implements BillingSubscriptionApi {
