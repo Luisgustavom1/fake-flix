@@ -26,7 +26,7 @@ export class SubscriptionController {
         await this.subscriptionService.createSubscription(
           createSubscriptionRequest,
         );
-      //TODO validate
+
       return plainToInstance(
         SubscriptionResponseDto,
         { ...createdSubscription, ...{ plan: createdSubscription.plan } },

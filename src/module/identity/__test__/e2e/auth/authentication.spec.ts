@@ -87,21 +87,6 @@ describe('AuthResolver (e2e)', () => {
         email: 'johndoe@example.com',
         password: 'password123',
       };
-      const createdUser = await userManagementService.create({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: signInInput.email,
-        password: signInInput.password,
-      });
-
-      const plan = planFactory.build();
-      const subscription = subscriptionFactory.build({
-        planId: plan.id,
-        status: SubscriptionStatus.Active,
-        userId: createdUser.id,
-      });
-      await testDbClient(Tables.Plan).insert(plan);
-      await testDbClient(Tables.Subscription).insert(subscription);
 
       const response = await request(app.getHttpServer())
         .post('/graphql')
@@ -136,6 +121,16 @@ describe('AuthResolver (e2e)', () => {
         email: signInInput.email,
         password: signInInput.password,
       });
+
+      const plan = planFactory.build();
+      const subscription = subscriptionFactory.build({
+        planId: plan.id,
+        status: SubscriptionStatus.Active,
+        userId: createdUser.id,
+      });
+      await testDbClient(Tables.Plan).insert(plan);
+      await testDbClient(Tables.Subscription).insert(subscription);
+
       nock('https://localhost:3000', {
         encodedQueryParams: true,
         reqheaders: {
@@ -165,7 +160,7 @@ describe('AuthResolver (e2e)', () => {
         .expect(200);
 
       expect(response.body.errors[0].message).toEqual(
-        'User subscription is not active: johndoe@example.com',
+        'User johndoe@example.com does not have an active subscription.',
       );
     });
   });

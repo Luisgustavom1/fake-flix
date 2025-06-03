@@ -12,9 +12,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { DomainModuleIntegration } from '@sharedModule/integration/interface/domain-module-integration';
 import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
-import { BillingSubscriptionProvider } from '@billingModule/core/integration/provider/billing-subscription-status.provider';
 import { IdentityPersistenceModule } from './persistence/identity-persistence.module';
 import { BillingModule } from '@billingModule/billing.module';
+import { BillingSubscriptionHttpClient } from '@sharedModule/integration/client/billing-subscription-http.client';
 
 @Module({
   imports: [
@@ -38,7 +38,7 @@ import { BillingModule } from '@billingModule/billing.module';
     UserRepository,
     {
       provide: BillingSubscriptionApi,
-      useExisting: BillingSubscriptionProvider,
+      useExisting: BillingSubscriptionHttpClient,
     },
   ],
 })

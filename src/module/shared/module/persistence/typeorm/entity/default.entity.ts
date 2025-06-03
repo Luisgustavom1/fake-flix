@@ -3,6 +3,8 @@ import {
   BeforeInsert,
   BeforeUpdate,
   CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn,
   PrimaryColumn,
 } from 'typeorm';
 
@@ -29,9 +31,9 @@ export abstract class DefaultEntity<T> {
   @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @CreateDateColumn({ nullable: true })
+  @DeleteDateColumn({ nullable: true })
   deletedAt: Date | null;
 }
