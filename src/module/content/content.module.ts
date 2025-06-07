@@ -47,7 +47,6 @@ import { HttpClientModule } from '@sharedModule/http/client/http.client module';
     ContentRepository,
     VideoRepository,
     ExternalMovieClient,
-    HttpClient,
 
     // services
     AgeRecommendationService,

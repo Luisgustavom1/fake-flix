@@ -1,12 +1,26 @@
-export class HttpClient {
-  async get<T>(url: string, options: Record<string, any>): Promise<T> {
-    const res = await fetch(url, options);
-    if (!res.ok) {
-      console.log(url);
-      const errorMessage = await res.text();
-      throw new Error(`Failed to fetch ${errorMessage}`);
-    }
+import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
+import { AxiosError } from 'axios';
+import { catchError, firstValueFrom } from 'rxjs';
+import { HttpClientException } from '../exception/http.client.exception';
 
-    return (await res.json()) as T;
+@Injectable()
+export class HttpClient {
+  constructor(private readonly httpService: HttpService) {}
+
+  async get<T extends Record<string, any>>(
+    url: string,
+    options: Record<string, any>,
+  ): Promise<T> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<T>(url, options).pipe(
+        catchError((error: AxiosError) => {
+          throw new HttpClientException(
+            `Error fetching data from ${url}: ${error}`,
+          );
+        }),
+      ),
+    );
+    return data;
   }
 }
