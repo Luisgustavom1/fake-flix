@@ -34,5 +34,5 @@
       "@resource/*": ["resource/*"]
     }
   },
-  "include": ["src/**/*", "test/**/*", "database/**/*"]
+  "include": ["src/**/*", "test/**/*"]
 }

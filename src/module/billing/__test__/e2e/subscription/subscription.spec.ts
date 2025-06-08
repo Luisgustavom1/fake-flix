@@ -6,7 +6,7 @@ import * as request from 'supertest';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
-import { planFactory } from '@identityModule/__test__/factory/plan.test-factory';
+import { planFactory } from '@identityModule/__test__/factory/plan.factory';
 import { PlanInterval } from '@billingModule/core/enum/plan-interval.enum';
 import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
 

@@ -1,29 +1,24 @@
 import { INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
-import { UserManagementService } from '@identityModule/core/service/user-management.service';
 import * as request from 'supertest';
 import { IdentityModule } from '@identityModule/identity.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
-import { planFactory } from '@identityModule/__test__/factory/plan.test-factory';
-import { subscriptionFactory } from '@identityModule/__test__/factory/subscription.test-factory';
+import { planFactory } from '@identityModule/__test__/factory/plan.factory';
+import { subscriptionFactory } from '@identityModule/__test__/factory/subscription.factory';
 import { Tables } from '@testInfra/enum/tables';
 import * as nock from 'nock';
 import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
+import { userFactory } from '@identityModule/__test__/factory/user.factory';
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication;
-  let userManagementService: UserManagementService;
   let module: TestingModule;
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([IdentityModule]);
     app = nestTestSetup.app;
     module = nestTestSetup.module;
-
-    userManagementService = nestTestSetup.app.get<UserManagementService>(
-      UserManagementService,
-    );
   });
 
   beforeEach(async () => {
@@ -45,12 +40,12 @@ describe('AuthResolver (e2e)', () => {
         email: 'johndoe@example.com',
         password: 'password123',
       };
-      const createdUser = await userManagementService.create({
+      const user = userFactory.build({
         firstName: 'John',
         lastName: 'Doe',
         email: signInInput.email,
-        password: signInInput.password,
       });
+      await testDbClient(Tables.User).insert(user);
       nock('https://localhost:3000', {
         encodedQueryParams: true,
         reqheaders: {
@@ -58,7 +53,7 @@ describe('AuthResolver (e2e)', () => {
         },
       })
         .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-        .get(`/subscription/user/${createdUser.id}/active`)
+        .get(`/subscription/user/${user.id}/active`)
         .reply(200, {
           isActive: true,
         });
@@ -115,18 +110,17 @@ describe('AuthResolver (e2e)', () => {
         password: 'password123',
       };
 
-      const createdUser = await userManagementService.create({
+      const user = userFactory.build({
         firstName: 'John',
         lastName: 'Doe',
         email: signInInput.email,
-        password: signInInput.password,
       });
-
+      await testDbClient(Tables.User).insert(user);
       const plan = planFactory.build();
       const subscription = subscriptionFactory.build({
         planId: plan.id,
         status: SubscriptionStatus.Active,
-        userId: createdUser.id,
+        userId: user.id,
       });
       await testDbClient(Tables.Plan).insert(plan);
       await testDbClient(Tables.Subscription).insert(subscription);
@@ -138,7 +132,7 @@ describe('AuthResolver (e2e)', () => {
         },
       })
         .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-        .get(`/subscription/user/${createdUser.id}/active`)
+        .get(`/subscription/user/${user.id}/active`)
         .reply(200, {
           isActive: false,
         });
@@ -172,13 +166,12 @@ describe('AuthResolver (e2e)', () => {
         email: 'johndoe@example.com',
         password: 'password123',
       };
-      const createdUser = await userManagementService.create({
+      const user = userFactory.build({
         firstName: 'John',
         lastName: 'Doe',
         email: signInInput.email,
-        password: signInInput.password,
       });
-
+      await testDbClient(Tables.User).insert(user);
       nock('https://localhost:3000', {
         encodedQueryParams: true,
         reqheaders: {
@@ -186,7 +179,7 @@ describe('AuthResolver (e2e)', () => {
         },
       })
         .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-        .get(`/subscription/user/${createdUser.id}/active`)
+        .get(`/subscription/user/${user.id}/active`)
         .reply(200, {
           isActive: true,
         });
@@ -195,7 +188,7 @@ describe('AuthResolver (e2e)', () => {
       const subscription = subscriptionFactory.build({
         planId: plan.id,
         status: SubscriptionStatus.Active,
-        userId: createdUser.id,
+        userId: user.id,
       });
       await testDbClient(Tables.Plan).insert(plan);
       await testDbClient(Tables.Subscription).insert(subscription);

@@ -8,6 +8,8 @@ import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
 import { mockGenAi } from '@testInfra/utils/http/rest/client/external-movie-rating';
+import { contentFactory } from '@contentModule/__test__/factory/content.factory';
+import { tvShowFactory } from '@contentModule/__test__/factory/tv-show.factory';
 
 describe('AdminTvShowController (e2e)', () => {
   let module: TestingModule;
@@ -66,18 +68,12 @@ describe('AdminTvShowController (e2e)', () => {
     });
 
     it('adds an episode to a tv show', async () => {
-      const tvShow = {
-        title: 'Test TvShow',
-        description: 'This is a test video',
-        thumbnailUrl: 'uploads/test.jpg',
-      };
-
-      const { body } = await request(app.getHttpServer())
-        .post('/admin/tv-show')
-        .attach('thumbnail', `${CONTENT_TEST_FIXTURES}/sample.jpg`)
-        .field('title', tvShow.title)
-        .field('description', tvShow.description)
-        .expect(HttpStatus.CREATED);
+      const content = contentFactory.build();
+      const tvShow = tvShowFactory.build({
+        contentId: content.id,
+      });
+      await testDbClient(Tables.Content).insert(content);
+      await testDbClient(Tables.TvShow).insert(tvShow);
 
       const episode = {
         title: 'Test Episode',
@@ -117,7 +113,7 @@ describe('AdminTvShowController (e2e)', () => {
       ]);
 
       await request(app.getHttpServer())
-        .post(`/admin/tv-show/${body.id}/upload-episode`)
+        .post(`/admin/tv-show/${content.id}/upload-episode`)
         .attach('video', `${CONTENT_TEST_FIXTURES}/sample.mp4`)
         .field('title', episode.title)
         .field('description', episode.description)
