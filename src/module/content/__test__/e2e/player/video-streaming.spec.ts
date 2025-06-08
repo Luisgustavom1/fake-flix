@@ -13,6 +13,14 @@ import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
 import { videoFactory } from '@contentModule/__test__/factory/video.factory';
+import { faker } from '@faker-js/faker';
+
+const fakeUserId = faker.string.uuid();
+jest.mock('jsonwebtoken', () => ({
+  verify: (_token: string, _secret: string, _options: any, callback: any) => {
+    callback(null, { sub: fakeUserId });
+  },
+}));
 
 describe('VideoController (e2e)', () => {
   let app: INestApplication;
@@ -70,6 +78,7 @@ describe('VideoController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .get(`/stream/${sampleVideo.id}`)
+        .set('Authorization', `Bearer faker-jwt`)
         .set('Range', range)
         .expect(HttpStatus.PARTIAL_CONTENT);
 
@@ -84,6 +93,7 @@ describe('VideoController (e2e)', () => {
     it('should return 404 when video is not found', async () => {
       await request(app.getHttpServer())
         .get(`/stream/45705b56-a47f-4869-b736-8f6626c940f8`)
+        .set('Authorization', `Bearer faker-jwt`)
         .expect(HttpStatus.NOT_FOUND);
     });
   });

@@ -3,9 +3,10 @@ import { SubscriptionService } from '@billingModule/core/service/subscription.se
 import { BillingPersistenceModule } from '@billingModule/persistence/billing-persistence.module';
 import { SubscriptionController } from '@billingModule/core/controller/subscription.controller';
 import { BillingSubscriptionProvider } from './core/integration/provider/billing-subscription-status.provider';
+import { AuthModule } from '@sharedModule/auth/auth.module';
 
 @Module({
-  imports: [BillingPersistenceModule],
+  imports: [BillingPersistenceModule, AuthModule],
   providers: [SubscriptionService, BillingSubscriptionProvider],
   controllers: [SubscriptionController],
   exports: [BillingSubscriptionProvider],

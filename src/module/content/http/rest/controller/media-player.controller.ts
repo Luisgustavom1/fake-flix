@@ -7,11 +7,13 @@ import {
   Param,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import type { Request, Response } from 'express';
 import { GetStreamingURLUseCase } from '@contentModule/application/use-case/get-streaming-url.use-case';
+import { AuthGuard } from '@sharedModule/auth/guard/auth.guard';
 
 @Controller('stream')
 export class MediaPlayerController {
@@ -19,6 +21,7 @@ export class MediaPlayerController {
     private readonly getStreamingUrlUseCase: GetStreamingURLUseCase,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Get(':videoId')
   @Header('Content-Type', 'video/mp4')
   async streamVideo(

@@ -4,12 +4,14 @@ import { PlanRepository } from '@billingModule/persistence/repository/plan.repos
 import { SubscriptionRepository } from '@billingModule/persistence/repository/subscription.repository';
 import { Subscription } from '@billingModule/persistence/entity/subscription.entity';
 import { SubscriptionStatus } from '../enum/subscription-status.enum';
+import { ClsService } from 'nestjs-cls';
 
 @Injectable()
 export class SubscriptionService {
   constructor(
     private readonly planRepository: PlanRepository,
     private readonly subscriptionRepository: SubscriptionRepository,
+    private readonly clsService: ClsService,
   ) {}
 
   async createSubscription({
@@ -23,7 +25,7 @@ export class SubscriptionService {
     }
     const subscription = new Subscription({
       planId,
-      userId: 'fake-user-id', // Replace with actual user ID
+      userId: this.clsService.get('userId'),
       status: SubscriptionStatus.Active,
       startDate: new Date(),
       autoRenew: true,

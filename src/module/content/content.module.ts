@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ContentRepository } from '@contentModule/persistence/repository/content.repository';
 import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
 import { PersistenceModule } from '@contentModule/persistence/persistence.module';
-import { HttpClient } from '@sharedModule/http/client/http.client';
 import { ConfigModule } from '@sharedModule/config/config.module';
 import { AdminMovieController } from '@contentModule/http/rest/controller/admin-movie.controller';
 import { MediaPlayerController } from '@contentModule/http/rest/controller/media-player.controller';
@@ -21,9 +20,15 @@ import { GeminiTextExtractorClient } from '@contentModule/http/rest/client/gemin
 import { VideoTranscriptGeneratorAdapter } from './core/adapter/video-transcript-generator.adapter.interface';
 import { VideoAgeRecommendationAdapter } from './core/adapter/video-recommendation.adapter.interface';
 import { HttpClientModule } from '@sharedModule/http/client/http.client module';
+import { AuthModule } from '@sharedModule/auth/auth.module';
 
 @Module({
-  imports: [PersistenceModule, ConfigModule.forRoot(), HttpClientModule],
+  imports: [
+    PersistenceModule,
+    ConfigModule.forRoot(),
+    HttpClientModule,
+    AuthModule,
+  ],
   controllers: [
     AdminMovieController,
     MediaPlayerController,
