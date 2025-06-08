@@ -1,5 +1,5 @@
-import { CreateTvShowEpisodeUseCase } from '@contentModule/application/use-case/create-tv-show-episode.use-case';
-import { CreateTvShowUseCase } from '@contentModule/application/use-case/create-tv-show.use-case';
+import { CreateTvShowEpisodeUseCase } from '@contentModule/core/use-case/create-tv-show-episode.use-case';
+import { CreateTvShowUseCase } from '@contentModule/core/use-case/create-tv-show.use-case';
 import { CreateEpisodeRequestDto } from '@contentModule/http/rest/dto/request/create-episode-request.dto';
 import { CreateTvShowRequestDto } from '@contentModule/http/rest/dto/request/create-tv-show-request.dto';
 import { CreateEpisodeResponseDto } from '@contentModule/http/rest/dto/response/create-episode-response.dto';

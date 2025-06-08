@@ -16,7 +16,7 @@ import * as path from 'path';
 import type { Request } from 'express';
 import { RestResponseInterceptor } from '../interceptor/rest-response.interceptor';
 import { CreateVideoResponseDTO } from '../dto/response/create-video-response-dto';
-import { CreateMovieUseCase } from '@contentModule/application/use-case/create-movie.use-case';
+import { CreateMovieUseCase } from '@contentModule/core/use-case/create-movie.use-case';
 
 export const FILES_DEST = './uploads';
 const MAX_THUMBNAIL_SIZE = 1024 * 1024 * 10; // 10MB

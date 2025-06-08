@@ -12,7 +12,7 @@ import {
 import * as path from 'path';
 import * as fs from 'fs';
 import type { Request, Response } from 'express';
-import { GetStreamingURLUseCase } from '@contentModule/application/use-case/get-streaming-url.use-case';
+import { GetStreamingURLUseCase } from '@contentModule/core/use-case/get-streaming-url.use-case';
 import { AuthGuard } from '@sharedModule/auth/guard/auth.guard';
 
 @Controller('stream')
