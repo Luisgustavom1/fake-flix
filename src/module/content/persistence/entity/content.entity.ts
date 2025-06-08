@@ -1,8 +1,8 @@
-import { ContentType } from '@contentModule/core/entity/content-type.enum';
 import { DefaultEntity } from '@sharedModule/persistence/typeorm/entity/default.entity';
 import { Column, Entity, OneToOne } from 'typeorm';
 import { TvShow } from './tv-show.entity';
 import { Movie } from './movie.entity';
+import { ContentType } from '@contentModule/core/enum/content-type.enum';
 
 @Entity({ name: 'Content' })
 export class Content extends DefaultEntity<Content> {

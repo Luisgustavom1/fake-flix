@@ -4,12 +4,15 @@ import * as request from 'supertest';
 import { IdentityModule } from '@identityModule/identity.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
-import { planFactory } from '@identityModule/__test__/factory/plan.factory';
-import { subscriptionFactory } from '@identityModule/__test__/factory/subscription.factory';
-import { Tables } from '@testInfra/enum/tables';
+import { Tables } from '@testInfra/enum/tables.enum';
 import * as nock from 'nock';
-import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
 import { userFactory } from '@identityModule/__test__/factory/user.factory';
+// eslint-disable-next-line import/no-restricted-paths
+import { subscriptionFactory } from '@billingModule/__test__/factory/subscription.factory';
+// eslint-disable-next-line import/no-restricted-paths
+import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
+// eslint-disable-next-line import/no-restricted-paths
+import { planFactory } from '@billingModule/__test__/factory/plan.factory';
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication;

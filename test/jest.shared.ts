@@ -14,7 +14,7 @@ export default {
     '@src/(.*)$': '<rootDir>/src/$1',
     '@testInfra/(.*)$': '<rootDir>/test/$1',
   },
-  setupFiles: ['<rootDir>/test/setup.ts'],
+  setupFiles: ['<rootDir>/test/test.setup.ts'],
   verbose: true,
   resetMocks: true,
 };

@@ -1,7 +1,7 @@
 import { Movie } from '@contentModule/persistence/entity/movie.entity';
 import { WithOptional } from '@sharedLibs/core/model/default.model';
 import { randomUUID } from 'crypto';
-import { ContentType } from '../entity/content-type.enum';
+import { ContentType } from '../enum/content-type.enum';
 
 export class MovieContentModel {
   id: string;

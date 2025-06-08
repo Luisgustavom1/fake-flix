@@ -5,9 +5,9 @@ import { createNestApp } from '@testInfra/test-e2e.setup';
 import * as request from 'supertest';
 import * as nock from 'nock';
 import { testDbClient } from '@testInfra/knex.database';
-import { Tables } from '@testInfra/enum/tables';
-import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
-import { mockGenAi } from '@testInfra/utils/http/rest/client/external-movie-rating';
+import { Tables } from '@testInfra/enum/tables.enum';
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/test.constants';
+import { mockGenAi } from '@testInfra/utils/external-movie-rating.utils';
 import { contentFactory } from '@contentModule/__test__/factory/content.factory';
 import { tvShowFactory } from '@contentModule/__test__/factory/tv-show.factory';
 

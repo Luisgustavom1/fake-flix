@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { SubscriptionService } from '@billingModule/core/service/subscription.service';
-import { CreateSubscriptionRequestDto } from '@billingModule/http/rest/dto/request/create-subscription.dto';
+import { CreateSubscriptionRequestDto } from '@billingModule/http/rest/dto/request/create-subscription-request.dto';
 import { SubscriptionResponseDto } from '@billingModule/http/rest/dto/response/subscription-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { UserSubscriptionActiveResponseDto } from '@billingModule/http/rest/dto/response/user-subscription-active-response.dto';

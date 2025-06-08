@@ -5,11 +5,11 @@ import { randomUUID } from 'crypto';
 import * as request from 'supertest';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
-import { Tables } from '@testInfra/enum/tables';
-import { planFactory } from '@identityModule/__test__/factory/plan.factory';
+import { Tables } from '@testInfra/enum/tables.enum';
 import { PlanInterval } from '@billingModule/core/enum/plan-interval.enum';
 import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
 import { faker } from '@faker-js/faker';
+import { planFactory } from '@billingModule/__test__/factory/plan.factory';
 
 const fakeUserId = faker.string.uuid();
 jest.mock('jsonwebtoken', () => ({

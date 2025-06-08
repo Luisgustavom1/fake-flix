@@ -1,7 +1,7 @@
 import { TvShow } from '@contentModule/persistence/entity/tv-show.entity';
 import { WithOptional } from '@sharedLibs/core/model/default.model';
 import { randomUUID } from 'crypto';
-import { ContentType } from '../entity/content-type.enum';
+import { ContentType } from '../enum/content-type.enum';
 
 export class TvShowContentModel {
   id: string;

@@ -1,4 +1,4 @@
-import { ContentType } from '@contentModule/core/entity/content-type.enum';
+import { ContentType } from '@contentModule/core/enum/content-type.enum';
 import { Content } from '@contentModule/persistence/entity/content.entity';
 import { faker } from '@faker-js/faker';
 

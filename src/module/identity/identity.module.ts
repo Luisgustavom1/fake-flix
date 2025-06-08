@@ -6,10 +6,9 @@ import { UserRepository } from './persistence/repository/user.repository';
 import { AuthService } from '@identityModule/core/service/authentication.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { DomainModuleIntegration } from '@sharedModule/integration/interface/domain-module-integration';
+import { DomainModuleIntegration } from '@sharedModule/integration/domain-module.integration';
 import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
 import { IdentityPersistenceModule } from './persistence/identity-persistence.module';
-import { BillingModule } from '@billingModule/billing.module';
 import { BillingSubscriptionHttpClient } from '@sharedModule/integration/client/billing-subscription-http.client';
 import { AuthModule } from '@sharedModule/auth/auth.module';
 
@@ -21,7 +20,6 @@ import { AuthModule } from '@sharedModule/auth/auth.module';
       driver: ApolloDriver,
     }),
     DomainModuleIntegration,
-    BillingModule,
     AuthModule,
   ],
   providers: [

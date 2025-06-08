@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  // eslint-disable-next-line no-restricted-imports
   ConfigService as NestConfigService,
   Path,
   PathValue,

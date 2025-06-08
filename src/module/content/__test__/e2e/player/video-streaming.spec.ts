@@ -6,12 +6,12 @@ import * as nock from 'nock';
 import {
   searchKeyword,
   searchMovie,
-} from '../../../../../../test/utils/http/rest/client/external-movie-rating';
+} from '../../../../../../test/utils/external-movie-rating.utils';
 import { ContentModule } from '@contentModule/content.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
-import { Tables } from '@testInfra/enum/tables';
-import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/constants';
+import { Tables } from '@testInfra/enum/tables.enum';
+import { CONTENT_TEST_FIXTURES } from '@contentModule/__test__/test.constants';
 import { videoFactory } from '@contentModule/__test__/factory/video.factory';
 import { faker } from '@faker-js/faker';
 

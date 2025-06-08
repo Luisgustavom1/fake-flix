@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import { IdentityModule } from '@identityModule/identity.module';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
-import { Tables } from '@testInfra/enum/tables';
+import { Tables } from '@testInfra/enum/tables.enum';
 
 describe('UserResolver (e2e)', () => {
   let app: INestApplication;

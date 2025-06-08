@@ -23,7 +23,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/.eslintrc.js', 'eslint.config.mjs'],
+    ignores: ['**/.eslintrc.js', 'eslint.config.mjs', "node_modules/**", "dist/**"],
   },
   ...fixupConfigRules(
     compat.extends(

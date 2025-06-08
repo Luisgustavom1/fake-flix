@@ -1,6 +1,7 @@
 import { DynamicModule } from '@nestjs/common';
 import {
   ConfigModuleOptions,
+  // eslint-disable-next-line no-restricted-imports
   ConfigModule as NestConfigModule,
 } from '@nestjs/config';
 import { ConfigService } from './service/config.service';
