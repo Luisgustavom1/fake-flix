@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  InternalServerErrorException,
-  NotFoundException,
-  Post,
-} from '@nestjs/common';
-import { NotFoundDomainException } from '@sharedLibs/core/exception/not-found-domain.exception';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { SubscriptionService } from '@billingModule/core/service/subscription.service';
 import { CreateSubscriptionRequestDto } from '@billingModule/http/rest/dto/request/create-subscription.dto';
 import { SubscriptionResponseDto } from '@billingModule/http/rest/dto/response/subscription-response.dto';
@@ -21,25 +13,18 @@ export class SubscriptionController {
   async createSubscription(
     @Body() createSubscriptionRequest: CreateSubscriptionRequestDto,
   ): Promise<SubscriptionResponseDto> {
-    try {
-      const createdSubscription =
-        await this.subscriptionService.createSubscription(
-          createSubscriptionRequest,
-        );
-
-      return plainToInstance(
-        SubscriptionResponseDto,
-        { ...createdSubscription, ...{ plan: createdSubscription.plan } },
-        {
-          excludeExtraneousValues: true,
-        },
+    const createdSubscription =
+      await this.subscriptionService.createSubscription(
+        createSubscriptionRequest,
       );
-    } catch (error) {
-      if (error instanceof NotFoundDomainException) {
-        throw new NotFoundException(error.message);
-      }
-      throw new InternalServerErrorException();
-    }
+
+    return plainToInstance(
+      SubscriptionResponseDto,
+      { ...createdSubscription, ...{ plan: createdSubscription.plan } },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   @Get('/user/:userId/active')

@@ -11,7 +11,6 @@ import {
 import * as path from 'path';
 import * as fs from 'fs';
 import type { Request, Response } from 'express';
-import { VideoNotFoundException } from '@contentModule/core/exception/video-not-found.exception';
 import { GetStreamingURLUseCase } from '@contentModule/application/use-case/get-streaming-url.use-case';
 
 @Controller('stream')
@@ -57,7 +56,7 @@ export class MediaPlayerController {
         'Content-Type': 'video/mp4',
       });
     } catch (error) {
-      if (error instanceof VideoNotFoundException) {
+      if (error instanceof NotFoundException) {
         res.status(HttpStatus.NOT_FOUND).send({
           message: error.message,
           error: 'Video not found',
