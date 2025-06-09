@@ -6,6 +6,7 @@ import { VideoProcessorService } from '@contentModule/core/service/video-process
 import { CreateEpisodeRequestDto } from '@contentModule/http/rest/dto/request/create-episode-request.dto';
 import { Episode } from '@contentModule/persistence/entity/episode.entity';
 import { EpisodeLifecycleService } from '@contentModule/core/service/episode-lifecycle.service';
+import { AppLogger } from '@sharedModule/logger/service/app-logger.service';
 
 export interface CreateMovieData {
   title: string;
@@ -22,6 +23,7 @@ export class CreateTvShowEpisodeUseCase {
     private readonly episodeLifecycleService: EpisodeLifecycleService,
     private readonly ageRecommendationService: AgeRecommendationService,
     private readonly videoProcessorService: VideoProcessorService,
+    private readonly logger: AppLogger,
   ) {}
 
   async execute(
@@ -66,6 +68,11 @@ export class CreateTvShowEpisodeUseCase {
     content.tvShow.episodes = [episode];
 
     await this.contentRepository.saveTvShow(content);
+
+    this.logger.log(`created episode for TV Show`, {
+      episodeId: episode.id,
+      tvShowId: content.tvShow.id,
+    });
 
     return episode;
   }

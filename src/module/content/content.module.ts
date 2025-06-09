@@ -21,6 +21,7 @@ import { VideoTranscriptGeneratorAdapter } from './core/adapter/video-transcript
 import { VideoAgeRecommendationAdapter } from './core/adapter/video-recommendation.adapter.interface';
 import { HttpClientModule } from '@sharedModule/http/client/http-client.module';
 import { AuthModule } from '@sharedModule/auth/auth.module';
+import { LoggerModule } from '@sharedModule/logger/logger.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthModule } from '@sharedModule/auth/auth.module';
     ConfigModule.forRoot(),
     HttpClientModule,
     AuthModule,
+    LoggerModule,
   ],
   controllers: [
     AdminMovieController,

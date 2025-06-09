@@ -51,6 +51,7 @@
     "globals": "^16.2.0",
     "graphql": "^16.9.0",
     "multer": "1.4.5-lts.1",
+    "nest-winston": "^1.10.2",
     "nestjs-cls": "^6.0.1",
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
@@ -59,6 +60,7 @@
     "typeorm": "^0.3.20",
     "typeorm-extension": "^3.5.1",
     "typeorm-transactional": "^0.5.0",
+    "winston": "^3.17.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
