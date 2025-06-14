@@ -22,6 +22,9 @@ import { VideoAgeRecommendationAdapter } from './core/adapter/video-recommendati
 import { HttpClientModule } from '@sharedModule/http/client/http-client.module';
 import { AuthModule } from '@sharedModule/auth/auth.module';
 import { LoggerModule } from '@sharedModule/logger/logger.module';
+import { BullModule } from '@nestjs/bullmq';
+import { QUEUES } from './queue/queue.constant';
+import { ConfigService } from '@sharedModule/config/service/config.service';
 
 @Module({
   imports: [
@@ -30,6 +33,36 @@ import { LoggerModule } from '@sharedModule/logger/logger.module';
     HttpClientModule,
     AuthModule,
     LoggerModule,
+    BullModule.forRootAsync({
+      imports: [ConfigModule.forRoot()],
+      useFactory: async (configSvc: ConfigService) => ({
+        connection: {
+          host: configSvc.get('redis.host'),
+          port: configSvc.get('redis.port'),
+        },
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 1000,
+          },
+          removeOnComplete: true,
+          removeOnFail: true,
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    BullModule.registerQueue(
+      {
+        name: QUEUES.VIDEO_AGE_RECOMMENDATION,
+      },
+      {
+        name: QUEUES.VIDEO_SUMMARY,
+      },
+      {
+        name: QUEUES.VIDEO_TRANSCRIPT,
+      },
+    ),
   ],
   controllers: [
     AdminMovieController,
