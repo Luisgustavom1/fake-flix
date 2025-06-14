@@ -25,6 +25,11 @@ const geminiApiSchema = z.object({
   url: z.string().url(),
 });
 
+const redisSchema = z.object({
+  host: z.string(),
+  port: z.coerce.number(),
+});
+
 export const configSchema = z.object({
   env: environmentSchema,
   database: databaseSchema,
@@ -32,4 +37,5 @@ export const configSchema = z.object({
   billingApi: billingApiSchema,
   port: z.coerce.number().positive().int(),
   geminiApi: geminiApiSchema,
+  redis: redisSchema,
 });

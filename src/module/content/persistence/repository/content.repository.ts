@@ -6,6 +6,7 @@ import { MovieContentModel } from '@contentModule/core/model/movie-content.model
 import { TvShowContentModel } from '@contentModule/core/model/tv-show-content.model';
 import { Episode } from '../entity/episode.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { ContentType } from '@contentModule/core/enum/content-type.enum';
 
 @Injectable()
 export class ContentRepository extends DefaultTypeOrmRepository<Content> {
@@ -14,6 +15,25 @@ export class ContentRepository extends DefaultTypeOrmRepository<Content> {
     private readonly dataSource: DataSource,
   ) {
     super(Content, dataSource.manager);
+  }
+
+  async saveMovieOrTvShow(
+    entity: TvShowContentModel,
+  ): Promise<TvShowContentModel>;
+  async saveMovieOrTvShow(
+    entity: MovieContentModel,
+  ): Promise<MovieContentModel>;
+  async saveMovieOrTvShow(
+    entity: MovieContentModel | TvShowContentModel,
+  ): Promise<MovieContentModel | TvShowContentModel>;
+  async saveMovieOrTvShow(entity: MovieContentModel | TvShowContentModel) {
+    if (entity.type === ContentType.MOVIE) {
+      return this.saveMovie(entity as MovieContentModel);
+    }
+    if (entity.type === ContentType.TV_SHOW) {
+      return this.saveTvShow(entity as TvShowContentModel);
+    }
+    throw new Error(`content type ${(entity as any).type} not found`);
   }
 
   async saveMovie(entity: MovieContentModel): Promise<MovieContentModel> {
@@ -28,16 +48,7 @@ export class ContentRepository extends DefaultTypeOrmRepository<Content> {
 
     await super.save(content);
 
-    return new MovieContentModel({
-      id: content.id,
-      title: content.title,
-      description: content.description,
-      ageRecommendation: content.ageRecommendation,
-      movie: content.movie!,
-      createdAt: content.createdAt,
-      updatedAt: content.updatedAt,
-      deletedAt: content.deletedAt,
-    });
+    return this.mapToMovieContentModel(content);
   }
 
   async saveTvShow(entity: TvShowContentModel): Promise<TvShowContentModel> {
@@ -59,16 +70,7 @@ export class ContentRepository extends DefaultTypeOrmRepository<Content> {
       }
     });
 
-    return new TvShowContentModel({
-      id: content.id,
-      title: content.title,
-      description: content.description,
-      ageRecommendation: content.ageRecommendation,
-      tvShow: content.tvShow!,
-      createdAt: content.createdAt,
-      updatedAt: content.updatedAt,
-      deletedAt: content.deletedAt,
-    });
+    return this.mapToTvShowContentModel(content);
   }
 
   async findTvShowContentById(
@@ -82,14 +84,62 @@ export class ContentRepository extends DefaultTypeOrmRepository<Content> {
       return null;
     }
 
+    return this.mapToTvShowContentModel(content);
+  }
+
+  async findContentByVideoId(
+    videoId: string,
+  ): Promise<TvShowContentModel | MovieContentModel | null> {
+    const content = await this.entityManager
+      .createQueryBuilder(Content, 'content')
+      .leftJoinAndSelect('content.movie', 'movie')
+      .leftJoinAndSelect('movie.video', 'movieVideo')
+      .leftJoinAndSelect('content.tvShow', 'tvShow')
+      .leftJoinAndSelect('tvShow.episodes', 'episode')
+      .leftJoinAndSelect('episode.video', 'episodeVideo')
+      .where('movieVideo.id = :videoId OR episodeVideo.id = :videoId', {
+        videoId,
+      })
+      .getOne();
+
+    if (!content || (!content.movie && !content.tvShow)) {
+      return null;
+    }
+
+    if (content.movie) {
+      return this.mapToMovieContentModel(content);
+    }
+
+    if (content.tvShow) {
+      return this.mapToTvShowContentModel(content);
+    }
+
+    return null;
+  }
+
+  private mapToMovieContentModel(content: Content): MovieContentModel {
+    return new MovieContentModel({
+      id: content.id,
+      title: content.title,
+      description: content.description,
+      ageRecommendation: content.ageRecommendation,
+      movie: content.movie!,
+      createdAt: content.createdAt,
+      updatedAt: content.updatedAt,
+      deletedAt: content.deletedAt,
+    });
+  }
+
+  private mapToTvShowContentModel(content: Content): TvShowContentModel {
     return new TvShowContentModel({
       id: content.id,
       title: content.title,
       description: content.description,
+      ageRecommendation: content.ageRecommendation,
+      tvShow: content.tvShow!,
       createdAt: content.createdAt,
       updatedAt: content.updatedAt,
       deletedAt: content.deletedAt,
-      tvShow: content.tvShow,
     });
   }
 }
