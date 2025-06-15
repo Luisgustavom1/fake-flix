@@ -1,5 +1,5 @@
 import { DefaultEntity } from '@sharedModule/persistence/typeorm/entity/default.entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, VersionColumn } from 'typeorm';
 import { Video } from './video.entity';
 
 @Entity({ name: 'VideoMetadata' })
@@ -28,4 +28,7 @@ export class VideoMetadata extends DefaultEntity<VideoMetadata> {
     referencedColumnName: 'id',
   })
   video: Video;
+
+  @VersionColumn()
+  version: number;
 }
