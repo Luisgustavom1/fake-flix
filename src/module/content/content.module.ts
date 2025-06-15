@@ -25,6 +25,13 @@ import { LoggerModule } from '@sharedModule/logger/logger.module';
 import { BullModule } from '@nestjs/bullmq';
 import { QUEUES } from './queue/queue.constant';
 import { ConfigService } from '@sharedModule/config/service/config.service';
+import { TranscribeVideoUseCase } from './core/use-case/transcribe-video.use-case';
+import { VideoSummaryConsumer } from './queue/consumer/video-summary.queue-consumer';
+import { VideoAgeRecommendationConsumer } from './queue/consumer/video-age-recommendation.queue-consumer';
+import { VideoTranscriptionConsumer } from './queue/consumer/transcribe-video.queue-consumer';
+import { VideoProcessingJobProducer } from './queue/producer/video-processing-job.queue-producer';
+import { SetVideoAgeRecommendationUseCase } from './core/use-case/set-video-age-recommendation.use-case';
+import { GenerateSummaryForVideoUseCase } from './core/use-case/generate-summary-for-video.use-case';
 
 @Module({
   imports: [
@@ -99,6 +106,17 @@ import { ConfigService } from '@sharedModule/config/service/config.service';
     CreateTvShowEpisodeUseCase,
     CreateTvShowUseCase,
     GetStreamingURLUseCase,
+    TranscribeVideoUseCase,
+    SetVideoAgeRecommendationUseCase,
+    GenerateSummaryForVideoUseCase,
+
+    // consumers
+    VideoSummaryConsumer,
+    VideoAgeRecommendationConsumer,
+    VideoTranscriptionConsumer,
+
+    // producers
+    VideoProcessingJobProducer,
   ],
 })
 export class ContentModule {}

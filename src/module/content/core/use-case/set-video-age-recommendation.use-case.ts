@@ -1,5 +1,5 @@
 import { Video } from '@contentModule/persistence/entity/video.entity';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   AgeRecommendationSchema,
   VideoAgeRecommendationAdapter,
@@ -14,6 +14,7 @@ import { AgeRecommendationService } from '../service/age-recommendation.service'
 @Injectable()
 export class SetVideoAgeRecommendationUseCase {
   constructor(
+    @Inject(VideoAgeRecommendationAdapter)
     private readonly videoAgeRecommendationAdapter: VideoAgeRecommendationAdapter,
     private readonly videoMetadataRepository: VideoMetadataRepository,
     private readonly contentRepository: ContentRepository,

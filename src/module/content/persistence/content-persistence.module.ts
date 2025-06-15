@@ -9,6 +9,7 @@ import { dataSourceOptionsFactory } from './typeorm-datasource.factory';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { ConfigModule } from '@sharedModule/config/config.module';
+import { VideoMetadataRepository } from './repository/video-metadata.repository';
 
 @Module({
   imports: [
@@ -35,12 +36,14 @@ import { ConfigModule } from '@sharedModule/config/config.module';
     MovieRepository,
     VideoRepository,
     EpisodeRepository,
+    VideoMetadataRepository,
   ],
   exports: [
     ContentRepository,
     MovieRepository,
     VideoRepository,
     EpisodeRepository,
+    VideoMetadataRepository,
   ],
 })
 export class PersistenceModule {}
