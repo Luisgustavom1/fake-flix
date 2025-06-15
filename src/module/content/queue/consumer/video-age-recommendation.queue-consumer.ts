@@ -5,6 +5,7 @@ import { VideoRepository } from '@contentModule/persistence/repository/video.rep
 import { AppLogger } from '@sharedModule/logger/service/app-logger.service';
 import { Job } from 'bullmq';
 import { SetVideoAgeRecommendationUseCase } from '@contentModule/core/use-case/set-video-age-recommendation.use-case';
+import { VideoProcessingJob } from '../queue.types';
 
 @Processor(QUEUES.VIDEO_AGE_RECOMMENDATION)
 export class VideoAgeRecommendationConsumer
@@ -23,7 +24,7 @@ export class VideoAgeRecommendationConsumer
     await this.worker.close(true);
   }
 
-  async process(job: Job<{ videoId: string; videoUrl: string }, void>) {
+  async process(job: Job<VideoProcessingJob, void>) {
     const data = job.data;
     this.logger.log(
       `Processing video age recommendation for video ID: ${data.videoId}`,

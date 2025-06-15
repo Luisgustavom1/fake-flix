@@ -4,6 +4,7 @@ import { QUEUES } from '../queue.constant';
 import { Queue } from 'bullmq';
 import { AppLogger } from '@sharedModule/logger/service/app-logger.service';
 import { Video } from '@contentModule/persistence/entity/video.entity';
+import { VideoProcessingJob } from '../queue.types';
 
 @Injectable()
 export class VideoProcessingJobProducer {
@@ -17,7 +18,7 @@ export class VideoProcessingJobProducer {
     private readonly logger: AppLogger,
   ) {}
 
-  private createVideoProcessingJob(video: Video) {
+  private createVideoProcessingJob(video: Video): VideoProcessingJob {
     return {
       videoId: video.id,
       videoUrl: video.url,

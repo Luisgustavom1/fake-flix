@@ -99,6 +99,9 @@
         },
         {
           "name": "queue.constant.ts"
+        },
+        {
+          "name": "queue.types.ts"
         }
       ]
     },
