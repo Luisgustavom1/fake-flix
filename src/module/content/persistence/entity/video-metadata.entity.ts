@@ -4,7 +4,7 @@ import { Video } from './video.entity';
 
 @Entity({ name: 'VideoMetadata' })
 export class VideoMetadata extends DefaultEntity<VideoMetadata> {
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   transcript: string;
 
   @Column({ type: 'text', nullable: true })
@@ -13,7 +13,7 @@ export class VideoMetadata extends DefaultEntity<VideoMetadata> {
   @Column({ type: 'integer', nullable: true })
   ageRating: number | null;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', default: 1 })
   duration: number;
 
   @Column({ type: 'text', nullable: true })
@@ -28,6 +28,9 @@ export class VideoMetadata extends DefaultEntity<VideoMetadata> {
     referencedColumnName: 'id',
   })
   video: Video;
+
+  @Column({ type: 'uuid', nullable: false })
+  videoId: string;
 
   @VersionColumn()
   version: number;

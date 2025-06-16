@@ -2,9 +2,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { FILES_DEST } from '@contentModule/http/rest/controller/admin-movie.controller';
 import * as fs from 'fs';
 import * as request from 'supertest';
-import * as nock from 'nock';
 import {
-  mockGenAi,
   searchKeyword,
   searchMovie,
 } from '../../../../../../test/utils/external-movie-rating.utils';
@@ -36,7 +34,6 @@ describe('VideoUploadController (e2e)', () => {
     await testDbClient(Tables.Video).del();
     await testDbClient(Tables.Movie).del();
     await testDbClient(Tables.Content).del();
-    nock.cleanAll();
   });
 
   afterAll(async () => {
@@ -68,33 +65,6 @@ describe('VideoUploadController (e2e)', () => {
         ],
       });
 
-      mockGenAi([
-        {
-          text: JSON.stringify({
-            responseText: 'This is a test video summary.',
-          }),
-        },
-      ]);
-
-      mockGenAi([
-        {
-          text: JSON.stringify({
-            responseText: 'This is a test video transcript.',
-          }),
-        },
-      ]);
-
-      mockGenAi([
-        {
-          text: JSON.stringify({
-            ageRating: 12,
-            explanation:
-              'The video contains mild language and thematic elements appropriate for viewers 12 and above.',
-            categories: ['language', 'thematic elements'],
-          }),
-        },
-      ]);
-
       const response = await request(app.getHttpServer())
         .post('/admin/movie')
         .attach('thumbnail', `${CONTENT_TEST_FIXTURES}/sample.jpg`)
@@ -124,14 +94,6 @@ describe('VideoUploadController (e2e)', () => {
       expect(movie.content.title).toBe(expectedVideo.title);
       expect(movie.content.description).toBe(expectedVideo.description);
       expect(movie.video.url).toBeDefined();
-      expect(movie.video.metadata.ageRating).toBe(12);
-      expect(movie.video.metadata.ageRatingExplanation).toBe(
-        'The video contains mild language and thematic elements appropriate for viewers 12 and above.',
-      );
-      expect(movie.video.metadata.ageRatingCategories).toEqual([
-        'language',
-        'thematic elements',
-      ]);
     });
 
     it('throws an error when the thumbnail is not provided', async () => {

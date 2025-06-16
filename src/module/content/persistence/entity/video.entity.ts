@@ -24,4 +24,7 @@ export class Video extends DefaultEntity<Video> {
     cascade: true,
   })
   metadata: VideoMetadata;
+
+  @Column({ type: 'uuid', nullable: true })
+  movieId: string;
 }
