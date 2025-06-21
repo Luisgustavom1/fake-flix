@@ -5,7 +5,7 @@ import { AppLogger } from '@sharedModule/logger/service/app-logger.service';
 import { Job } from 'bullmq';
 import { VideoProcessingJob } from '../../../shared/queue/queue.types';
 import { VideoRepository } from '@contentModule/shared/persistence/repository/video.repository';
-import { SetVideoAgeRecommendationUseCase } from '@contentModule/video-processor/core/use-case/set-video-age-recommendation.use-case';
+import { SetAgeRecommendationUseCase } from '@contentModule/video-processor/core/use-case/set-age-recommendation.use-case';
 
 @Processor(QUEUES.VIDEO_AGE_RECOMMENDATION)
 export class VideoAgeRecommendationConsumer
@@ -14,7 +14,7 @@ export class VideoAgeRecommendationConsumer
 {
   constructor(
     private readonly videoRepository: VideoRepository,
-    private readonly setAgeRecommendationUseCase: SetVideoAgeRecommendationUseCase,
+    private readonly setAgeRecommendationUseCase: SetAgeRecommendationUseCase,
     private readonly logger: AppLogger,
   ) {
     super();

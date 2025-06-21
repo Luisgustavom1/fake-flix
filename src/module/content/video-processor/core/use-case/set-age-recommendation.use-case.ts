@@ -1,23 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  AgeRecommendationSchema,
-  VideoAgeRecommendationAdapter,
-} from '../adapter/video-recommendation.adapter.interface';
 import { VideoMetadataRepository } from '@contentModule/video-processor/persistence/repository/video-metadata.repository';
-import { ContentRepository } from '@contentModule/admin/persistence/repository/content.repository';
 import { ContentAgeRecommendationQueueProducer } from '@contentModule/video-processor/queue/producer/content-age-recommendation.queue-producer';
 import { AppLogger } from '@sharedModule/logger/service/app-logger.service';
 import { Video } from '@contentModule/shared/persistence/entity/video.entity';
 import { runInTransaction } from 'typeorm-transactional';
 import { VideoMetadata } from '@contentModule/shared/persistence/entity/video-metadata.entity';
+import {
+  AgeRecommendationSchema,
+  VideoAgeRecommendationAdapter,
+} from '@contentModule/video-processor/core/adapter/video-recommendation.adapter.interface';
 
 @Injectable()
-export class SetVideoAgeRecommendationUseCase {
+export class SetAgeRecommendationUseCase {
   constructor(
     @Inject(VideoAgeRecommendationAdapter)
     private readonly videoAgeRecommendationAdapter: VideoAgeRecommendationAdapter,
     private readonly videoMetadataRepository: VideoMetadataRepository,
-    private readonly contentRepository: ContentRepository,
     private readonly contentAgeRecommendationQueueProducer: ContentAgeRecommendationQueueProducer,
     private logger: AppLogger,
   ) {}
@@ -39,11 +37,6 @@ export class SetVideoAgeRecommendationUseCase {
       video,
       ageRecommendation,
     );
-
-    const content = await this.contentRepository.findContentByVideoId(video.id);
-    if (!content) {
-      throw new Error(`Content not found for video ID ${video.id}`);
-    }
 
     await runInTransaction(
       async () => {

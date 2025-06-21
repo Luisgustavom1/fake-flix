@@ -10,20 +10,20 @@ import { Tables } from '@testInfra/enum/tables.enum';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/shared/__test__/test.constants';
 import { movieFactory } from '@contentModule/shared/__test__/factory/movie.factory';
 import { videoMetadataFactory } from '@contentModule/shared/__test__/factory/video-metadata.factory';
-import { SetVideoAgeRecommendationUseCase } from '../../set-video-age-recommendation.use-case';
+import { SetAgeRecommendationUseCase } from '../../set-age-recommendation.use-case';
 import { Video } from '@contentModule/shared/persistence/entity/video.entity';
 
 describe('SetAgeRecommendationUseCase', () => {
   let module: TestingModule;
   let app: INestApplication;
-  let setAgeRecommendationUseCase: SetVideoAgeRecommendationUseCase;
+  let setAgeRecommendationUseCase: SetAgeRecommendationUseCase;
 
   beforeAll(async () => {
     const nestTestSetup = await createNestApp([ContentModule]);
     app = nestTestSetup.app;
     module = nestTestSetup.module;
-    setAgeRecommendationUseCase = module.get<SetVideoAgeRecommendationUseCase>(
-      SetVideoAgeRecommendationUseCase,
+    setAgeRecommendationUseCase = module.get<SetAgeRecommendationUseCase>(
+      SetAgeRecommendationUseCase,
     );
   });
 
@@ -93,11 +93,6 @@ describe('SetAgeRecommendationUseCase', () => {
     const updatedVideoMetadata = await testDbClient('VideoMetadata')
       .where({ videoId: video.id })
       .first();
-    const dbContent = await testDbClient('Content')
-      .where({ id: content.id })
-      .first();
-    expect(dbContent).toBeDefined();
-    expect(dbContent.ageRecommendation).toEqual(12);
 
     expect(updatedVideoMetadata).toBeDefined();
     expect(updatedVideoMetadata.ageRatingCategories).toEqual([

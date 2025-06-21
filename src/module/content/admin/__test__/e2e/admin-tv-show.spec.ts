@@ -8,13 +8,14 @@ import { Tables } from '@testInfra/enum/tables.enum';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/shared/__test__/test.constants';
 import { contentFactory } from '@contentModule/shared/__test__/factory/content.factory';
 import { tvShowFactory } from '@contentModule/shared/__test__/factory/tv-show.factory';
+import { ContentAdminModule } from '@contentModule/admin/content-admin.module';
 
 describe('AdminTvShowController (e2e)', () => {
   let module: TestingModule;
   let app: INestApplication;
 
   beforeAll(async () => {
-    const nestTestSetup = await createNestApp();
+    const nestTestSetup = await createNestApp([ContentAdminModule]);
     app = nestTestSetup.app;
     module = nestTestSetup.module;
   });

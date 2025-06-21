@@ -14,8 +14,8 @@ import { ConfigModule } from '@sharedModule/config/config.module';
 import { HttpClientModule } from '@sharedModule/http/client/http-client.module';
 import { LoggerModule } from '@sharedModule/logger/logger.module';
 import { ContentAgeRecommendationService } from '@contentModule/admin/core/service/content-age-recommendation.service';
-import { SetVideoAgeRecommendationUseCase } from '@contentModule/video-processor/core/use-case/set-video-age-recommendation.use-case';
 import { ContentSharedModule } from '@contentModule/shared/content-shared.module';
+import { MovieRepository } from './persistence/repository/movie.repository';
 
 @Module({
   imports: [
@@ -35,9 +35,9 @@ import { ContentSharedModule } from '@contentModule/shared/content-shared.module
     CreateMovieUseCase,
     CreateTvShowUseCase,
     VideoProcessingJobProducer,
-    SetVideoAgeRecommendationUseCase,
     ContentRepository,
     EpisodeRepository,
+    MovieRepository,
   ],
   controllers: [AdminMovieController, AdminTvShowController],
 })

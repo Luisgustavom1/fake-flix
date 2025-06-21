@@ -14,7 +14,8 @@ import { ConfigModule } from '@sharedModule/config/config.module';
 import { HttpClientModule } from '@sharedModule/http/client/http-client.module';
 import { LoggerModule } from '@sharedModule/logger/logger.module';
 import { VideoTranscriptionConsumer } from '@contentModule/video-processor/queue/consumer/transcribe-video.queue-consumer';
-import { SetVideoAgeRecommendationUseCase } from '@contentModule/video-processor/core/use-case/set-video-age-recommendation.use-case';
+import { SetAgeRecommendationUseCase } from '@contentModule/video-processor/core/use-case/set-age-recommendation.use-case';
+import { ContentAgeRecommendationQueueProducer } from './queue/producer/content-age-recommendation.queue-producer';
 
 @Module({
   imports: [
@@ -41,8 +42,9 @@ import { SetVideoAgeRecommendationUseCase } from '@contentModule/video-processor
     VideoSummaryConsumer,
     VideoTranscriptionConsumer,
     GenerateSummaryForVideoUseCase,
-    SetVideoAgeRecommendationUseCase,
+    SetAgeRecommendationUseCase,
     TranscribeVideoUseCase,
+    ContentAgeRecommendationQueueProducer,
     VideoMetadataRepository,
   ],
 })
