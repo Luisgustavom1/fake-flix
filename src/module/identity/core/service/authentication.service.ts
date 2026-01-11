@@ -1,8 +1,8 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '@identityModule/persistence/repository/user.repository';
-import * as bcrypt from 'bcrypt';
 import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {

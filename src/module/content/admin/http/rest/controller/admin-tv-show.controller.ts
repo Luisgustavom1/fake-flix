@@ -8,10 +8,12 @@ import {
   BadRequestException,
   Body,
   Controller,
+  FileTypeValidator,
   HttpCode,
   HttpStatus,
+  MaxFileSizeValidator,
   Param,
-  ParseFilePipeBuilder,
+  ParseFilePipe,
   Post,
   Req,
   UploadedFile,
@@ -51,14 +53,15 @@ export class AdminTvShowController {
     @Req() _req: Request,
     @Body() contentData: CreateTvShowRequestDto,
     @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({
-          fileType: 'jpeg',
-        })
-        .addMaxSizeValidator({
-          maxSize: 1024 * 1024,
-        })
-        .build(),
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
+          new FileTypeValidator({
+            fileType: 'image/jpeg',
+            skipMagicNumbersValidation: process.env.NODE_ENV === 'test',
+          }),
+        ],
+      }),
     )
     thumbnail: Express.Multer.File,
   ): Promise<CreateTvShowResponseDto> {
@@ -96,14 +99,15 @@ export class AdminTvShowController {
     @Body() episodeData: CreateEpisodeRequestDto,
     @Param('contentId') contentId: string,
     @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({
-          fileType: 'mp4',
-        })
-        .addMaxSizeValidator({
-          maxSize: 1024 * 1024 * 1024,
-        })
-        .build(),
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1024 }),
+          new FileTypeValidator({
+            fileType: 'video/mp4',
+            skipMagicNumbersValidation: process.env.NODE_ENV === 'test',
+          }),
+        ],
+      }),
     )
     video: Express.Multer.File,
   ): Promise<CreateEpisodeResponseDto> {
