@@ -10,9 +10,9 @@ import { userFactory } from '@identityModule/__test__/factory/user.factory';
 // eslint-disable-next-line import/no-restricted-paths
 import { subscriptionFactory } from '@billingModule/__test__/factory/subscription.factory';
 // eslint-disable-next-line import/no-restricted-paths
-import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
-// eslint-disable-next-line import/no-restricted-paths
 import { planFactory } from '@billingModule/__test__/factory/plan.factory';
+// eslint-disable-next-line import/no-restricted-paths
+import { SubscriptionStatus } from '@billingModule/subscription/core/enum/subscription-status.enum';
 
 describe('AuthResolver (e2e)', () => {
   let app: INestApplication;

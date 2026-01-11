@@ -6,10 +6,10 @@ import * as request from 'supertest';
 import { createNestApp } from '@testInfra/test-e2e.setup';
 import { testDbClient } from '@testInfra/knex.database';
 import { Tables } from '@testInfra/enum/tables.enum';
-import { PlanInterval } from '@billingModule/core/enum/plan-interval.enum';
-import { SubscriptionStatus } from '@billingModule/core/enum/subscription-status.enum';
 import { faker } from '@faker-js/faker';
 import { planFactory } from '@billingModule/__test__/factory/plan.factory';
+import { PlanInterval } from '@billingModule/subscription/core/enum/plan-interval.enum';
+import { SubscriptionStatus } from '@billingModule/subscription/core/enum/subscription-status.enum';
 
 const fakeUserId = faker.string.uuid();
 jest.mock('jsonwebtoken', () => ({
