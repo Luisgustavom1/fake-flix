@@ -35,7 +35,7 @@
     "module_folder": {
       "name": "module",
       "children": [
-        { "name": "billing", "ruleId": "domain_module_folder" },
+        { "name": "billing", "ruleId": "domain_module_with_features" },
         { "name": "content", "ruleId": "sub_domain_module_folder" },
         { "name": "identity", "ruleId": "domain_module_folder" },
         { "name": "shared", "ruleId": "shared_module_folder" }
@@ -68,6 +68,42 @@
         }
       ]
     },
+    "domain_module_with_features": {
+      "name": "{kebab-case}",
+      "children": [
+        { "name": "{kebab-case}.module.ts" },
+        { "name": "__test__", "ruleId": "test_folder" },
+        { "name": "shared", "ruleId": "module_shared_folder" },
+        { "name": "integration", "ruleId": "integration_folder" },
+        { "name": "{kebab-case}", "ruleId": "feature_folder" }
+      ]
+    },
+
+    "integration_folder": {
+      "name": "integration",
+      "children": [
+        {
+          "name": "provider",
+          "children": [
+            {
+              "name": "{kebab-case}.provider.ts"
+            }
+          ]
+        }
+      ]
+    },
+
+    "feature_folder": {
+      "name": "{kebab-case}",
+      "children": [
+        { "name": "__test__", "ruleId": "test_folder" },
+        { "name": "core", "ruleId": "core_folder" },
+        { "name": "http", "ruleId": "http_folder" },
+        { "name": "persistence", "ruleId": "persistence_folder" },
+        { "name": "queue", "ruleId": "queue_folder" }
+      ]
+    },
+
     "sub_domain_module_folder": {
       "name": "{kebab-case}",
       "children": [
@@ -143,12 +179,21 @@
     "file_name": {
       "name": "{kebab-case}.{folder-name}.ts"
     },
+
     "core_folder": {
       "name": "core",
       "children": [
         {
           "name": "enum",
           "children": [{ "ruleId": "file_name" }]
+        },
+        {
+          "name": "interface",
+          "children": [{ "ruleId": "file_name" }]
+        },
+        {
+          "name": "event",
+          "children": [{ "name": "{kebab-case}.event.ts" }]
         },
         { "name": "model", "children": [{ "ruleId": "file_name" }] },
         { "name": "service", "children": [{ "ruleId": "file_name" }] },
@@ -160,6 +205,7 @@
         }
       ]
     },
+
     "http_folder": {
       "name": "http",
       "children": [
@@ -253,6 +299,16 @@
       "children": [
         { "name": "{kebab-case}", "ruleId": "nested_module_folder" },
         { "name": "{kebab-case}.{kebab-case}.ts" }
+      ]
+    },
+    "module_shared_folder": {
+      "name": "shared",
+      "children": [
+        { "name": "{kebab-case}.module.ts" },
+        { "name": "core", "ruleId": "core_folder" },
+        { "name": "http", "ruleId": "http_folder" },
+        { "name": "persistence", "ruleId": "persistence_folder" },
+        { "name": "queue", "ruleId": "queue_folder" }
       ]
     }
   }

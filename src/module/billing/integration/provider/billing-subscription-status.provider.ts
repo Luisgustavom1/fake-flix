@@ -1,4 +1,4 @@
-import { SubscriptionService } from '@billingModule/core/service/subscription.service';
+import { SubscriptionService } from '@billingModule/subscription/core/service/subscription.service';
 import { Injectable } from '@nestjs/common';
 import { BillingSubscriptionApi } from '@sharedModule/integration/interface/billing-integration.interface';
 

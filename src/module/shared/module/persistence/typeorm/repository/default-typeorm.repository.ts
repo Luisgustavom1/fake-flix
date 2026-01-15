@@ -1,6 +1,7 @@
 import {
   EntityManager,
   EntityTarget,
+  FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
   Repository,
@@ -8,17 +9,19 @@ import {
 import { DefaultEntity } from '../entity/default.entity';
 
 export abstract class DefaultTypeOrmRepository<T extends DefaultEntity<T>> {
-  private repository: Repository<T>;
+  protected repository: Repository<T>;
+  protected entityManager: EntityManager;
 
   constructor(
     readonly entity: EntityTarget<T>,
-    readonly entityManager: EntityManager,
+    entityManager: EntityManager,
   ) {
     /*
      * We don't extend the Repository class from TypeOrm because we want to have control over the repository instance.
      * This way we can control the access to the repo methods and avoid exposing them to the outside world (typeorm methods).
      * */
     this.repository = entityManager.getRepository(entity);
+    this.entityManager = entityManager;
   }
 
   async save(entity: T): Promise<T> {
@@ -38,6 +41,10 @@ export abstract class DefaultTypeOrmRepository<T extends DefaultEntity<T>> {
 
   async find(options: FindOneOptions<T>): Promise<T | null> {
     return this.repository.findOne(options);
+  }
+
+  async findMany(options: FindManyOptions<T>): Promise<T[]> {
+    return this.repository.find(options);
   }
 
   async exists(id: string): Promise<boolean> {

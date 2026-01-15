@@ -3,7 +3,6 @@ import { movieFactory } from '@contentModule/shared/__test__/factory/movie.facto
 import { videoMetadataFactory } from '@contentModule/shared/__test__/factory/video-metadata.factory';
 import { videoFactory } from '@contentModule/shared/__test__/factory/video.factory';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/shared/__test__/test.constants';
-import { ContentModule } from '@contentModule/content.module';
 import { INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 import { Tables } from '@testInfra/enum/tables.enum';
@@ -12,6 +11,7 @@ import { createNestApp } from '@testInfra/test-e2e.setup';
 import * as nock from 'nock';
 import { GenerateSummaryForVideoUseCase } from '../../generate-summary-for-video.use-case';
 import { Video } from '@contentModule/shared/persistence/entity/video.entity';
+import { ContentVideoProcessorModule } from '@contentModule/video-processor/content-video-processor.module';
 
 describe('GenerateSummaryForVideoUseCase', () => {
   let module: TestingModule;
@@ -19,7 +19,7 @@ describe('GenerateSummaryForVideoUseCase', () => {
   let generateSummaryForVideoUseCase: GenerateSummaryForVideoUseCase;
 
   beforeAll(async () => {
-    const nestTestSetup = await createNestApp([ContentModule]);
+    const nestTestSetup = await createNestApp([ContentVideoProcessorModule]);
     app = nestTestSetup.app;
     module = nestTestSetup.module;
     generateSummaryForVideoUseCase = module.get<GenerateSummaryForVideoUseCase>(

@@ -1,6 +1,5 @@
 import { contentFactory } from '@contentModule/shared/__test__/factory/content.factory';
 import { videoFactory } from '@contentModule/shared/__test__/factory/video.factory';
-import { ContentModule } from '@contentModule/content.module';
 import { INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 import { testDbClient } from '@testInfra/knex.database';
@@ -12,6 +11,7 @@ import { movieFactory } from '@contentModule/shared/__test__/factory/movie.facto
 import { videoMetadataFactory } from '@contentModule/shared/__test__/factory/video-metadata.factory';
 import { SetAgeRecommendationUseCase } from '../../set-age-recommendation.use-case';
 import { Video } from '@contentModule/shared/persistence/entity/video.entity';
+import { ContentVideoProcessorModule } from '@contentModule/video-processor/content-video-processor.module';
 
 describe('SetAgeRecommendationUseCase', () => {
   let module: TestingModule;
@@ -19,7 +19,7 @@ describe('SetAgeRecommendationUseCase', () => {
   let setAgeRecommendationUseCase: SetAgeRecommendationUseCase;
 
   beforeAll(async () => {
-    const nestTestSetup = await createNestApp([ContentModule]);
+    const nestTestSetup = await createNestApp([ContentVideoProcessorModule]);
     app = nestTestSetup.app;
     module = nestTestSetup.module;
     setAgeRecommendationUseCase = module.get<SetAgeRecommendationUseCase>(

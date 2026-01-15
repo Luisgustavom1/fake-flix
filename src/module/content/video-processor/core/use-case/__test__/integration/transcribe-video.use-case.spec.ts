@@ -3,7 +3,6 @@ import { movieFactory } from '@contentModule/shared/__test__/factory/movie.facto
 import { videoMetadataFactory } from '@contentModule/shared/__test__/factory/video-metadata.factory';
 import { videoFactory } from '@contentModule/shared/__test__/factory/video.factory';
 import { CONTENT_TEST_FIXTURES } from '@contentModule/shared/__test__/test.constants';
-import { ContentModule } from '@contentModule/content.module';
 import { INestApplication } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@sharedModule/config/service/config.service';
@@ -13,6 +12,7 @@ import knex, { Knex } from 'knex';
 import * as nock from 'nock';
 import { TranscribeVideoUseCase } from '../../transcribe-video.use-case';
 import { Video } from '@contentModule/shared/persistence/entity/video.entity';
+import { ContentVideoProcessorModule } from '@contentModule/video-processor/content-video-processor.module';
 
 describe('TranscribeVideoUseCase', () => {
   let module: TestingModule;
@@ -21,7 +21,7 @@ describe('TranscribeVideoUseCase', () => {
   let transcribeVideoUseCase: TranscribeVideoUseCase;
 
   beforeAll(async () => {
-    const nestTestSetup = await createNestApp([ContentModule]);
+    const nestTestSetup = await createNestApp([ContentVideoProcessorModule]);
     app = nestTestSetup.app;
     module = nestTestSetup.module;
     const configService = module.get<ConfigService>(ConfigService);
