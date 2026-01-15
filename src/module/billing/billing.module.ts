@@ -32,6 +32,7 @@ import { SubscriptionBillingController } from '@billingModule/subscription/http/
 // Invoice feature
 import { InvoiceService } from '@billingModule/invoice/core/service/invoice.service';
 import { InvoiceGeneratorService } from '@billingModule/invoice/core/service/invoice-generator.service';
+import { InvoiceBuilder } from '@billingModule/invoice/core/service/invoice-builder.service';
 import { PlanChangeInvoiceGeneratorService } from '@billingModule/invoice/core/service/plan-change-invoice-generator.service';
 import { ChargeRepository } from '@billingModule/invoice/persistence/repository/charge.repository';
 import { PaymentRepository } from '@billingModule/invoice/persistence/repository/payment.repository';
@@ -102,6 +103,7 @@ import { TaxCalculationSummaryRepository } from '@billingModule/tax/persistence/
     // Invoice
     InvoiceService,
     InvoiceGeneratorService,
+    InvoiceBuilder,
     PlanChangeInvoiceGeneratorService,
     PlanChangeInvoiceQueueConsumer,
     ChargeRepository,

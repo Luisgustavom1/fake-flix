@@ -207,7 +207,16 @@
             { "name": "{kebab-case}.types.ts" }
           ]
         },
-        { "name": "service", "children": [{ "ruleId": "file_name" }] },
+        {
+          "name": "service",
+          "children": [
+            { "ruleId": "file_name" },
+            {
+              "name": "__test__",
+              "children": [{ "name": "{kebab-case}.service.spec.ts" }]
+            }
+          ]
+        },
         { "name": "use-case", "ruleId": "use_case_folder" },
         { "name": "exception", "children": [{ "ruleId": "file_name" }] },
         {
