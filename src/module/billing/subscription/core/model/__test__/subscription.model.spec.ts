@@ -676,13 +676,13 @@ describe('Subscription Domain Model', () => {
     });
 
     it('addAddOn() should throw not implemented', () => {
-      expect(() => subscription.addAddOn('addon-1', 1)).toThrow(
+      expect(() => subscription.addAddOn()).toThrow(
         'Not implemented yet - Phase 5',
       );
     });
 
     it('removeAddOn() should throw not implemented', () => {
-      expect(() => subscription.removeAddOn('addon-1')).toThrow(
+      expect(() => subscription.removeAddOn()).toThrow(
         'Not implemented yet - Phase 5',
       );
     });

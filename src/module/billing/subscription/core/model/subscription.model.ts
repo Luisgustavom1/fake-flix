@@ -25,6 +25,9 @@ import {
   JsonMetadata,
   DomainError,
 } from './subscription.types';
+import { DomainEvent } from '../../../../shared/core/event/domain-event.interface';
+import { SubscriptionPlanChangedEvent } from '../event/subscription-plan-changed.event';
+import { AddOnsRemovedEvent } from '../event/add-ons-removed.event';
 
 export class Subscription {
   // Identity (immutable)
@@ -68,6 +71,9 @@ export class Subscription {
   private readonly createdAt: Date;
   private updatedAt: Date;
   private deletedAt: Date | null;
+
+  // Domain Events
+  private readonly events: DomainEvent[] = [];
 
   /**
    * Private constructor - use factory methods to create instances
@@ -155,6 +161,31 @@ export class Subscription {
     this.planId = newPlanId;
     this.addOns = addOnMigrationResult.remainingAddOns;
     this.updatedAt = new Date();
+
+    // ✅ Collect Domain Events
+    this.addEvent(
+      new SubscriptionPlanChangedEvent(
+        this.id,
+        this.userId,
+        oldPlanId,
+        this.planId,
+        prorationResult.credit,
+        prorationResult.charge,
+        addOnMigrationResult.removed.length,
+        effectiveDate,
+      ),
+    );
+
+    // ✅ Event for removed add-ons (if any)
+    if (addOnMigrationResult.removed.length > 0) {
+      this.addEvent(
+        new AddOnsRemovedEvent(
+          this.id,
+          addOnMigrationResult.removed.map((a) => a.id),
+          'Incompatible with new plan',
+        ),
+      );
+    }
 
     // ✅ Return structured result
     return {
@@ -360,6 +391,51 @@ export class Subscription {
 
   getDeletedAt(): Date | null {
     return this.deletedAt;
+  }
+
+  // ========================================
+  // FUTURE DOMAIN BEHAVIORS (Stubs)
+  // ========================================
+
+  /**
+   * TODO: Implement in Phase 5
+
+  // ========================================
+  // DOMAIN EVENT METHODS
+  // ========================================
+
+  /**
+   * Add domain event to collection
+   *
+   * Events are collected during domain operations and later
+   * published by the application service after successful persistence.
+   *
+   * @param event - Domain event to collect
+   */
+  private addEvent(event: DomainEvent): void {
+    this.events.push(event);
+  }
+
+  /**
+   * Get all collected events
+   *
+   * Returns a readonly copy to prevent external modification.
+   * Called by application service to publish events.
+   *
+   * @returns Readonly array of domain events
+   */
+  getEvents(): readonly DomainEvent[] {
+    return [...this.events];
+  }
+
+  /**
+   * Clear all events
+   *
+   * Called by application service after successful event publishing
+   * to prevent duplicate publishing.
+   */
+  clearEvents(): void {
+    this.events.length = 0;
   }
 
   // ========================================

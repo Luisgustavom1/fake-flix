@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional';
 import { AppLogger } from '@sharedModule/logger/service/app-logger.service';
 import { SubscriptionRepository } from '@billingModule/subscription/persistence/repository/subscription.repository';
@@ -8,6 +8,10 @@ import { AddOnManagerService } from '@billingModule/subscription/core/service/ad
 import { UsageBillingService } from '@billingModule/usage/core/service/usage-billing.service';
 import { InvoiceBuilder } from '@billingModule/invoice/core/service/invoice-builder.service';
 import { ChangePlanCommand, ChangePlanResult } from './change-plan.types';
+import {
+  IEventBus,
+  EVENT_BUS,
+} from '../../../../shared/core/event/event-bus.interface';
 
 /**
  * CHANGE PLAN USE CASE
@@ -34,6 +38,7 @@ export class ChangePlanUseCase {
     private readonly usageBilling: UsageBillingService,
     private readonly invoiceBuilder: InvoiceBuilder,
     private readonly logger: AppLogger,
+    @Inject(EVENT_BUS) private readonly eventBus: IEventBus,
   ) {}
 
   /**
@@ -151,7 +156,15 @@ export class ChangePlanUseCase {
     await this.subscriptionRepository.saveDomain(subscription);
 
     // ========================================
-    // 7. Build Invoice (separate aggregate)
+    // 7. Publish Domain Events
+    // ========================================
+
+    const events = subscription.getEvents();
+    await this.eventBus.publishAll([...events]);
+    subscription.clearEvents();
+
+    // ========================================
+    // 8. Build Invoice (separate aggregate)
     // ========================================
 
     const invoice = await this.invoiceBuilder.buildForPlanChange(
@@ -163,7 +176,7 @@ export class ChangePlanUseCase {
     );
 
     // ========================================
-    // 8. Log Success
+    // 9. Log Success
     // ========================================
 
     this.logger.log('Plan change completed for user', {
@@ -176,10 +189,11 @@ export class ChangePlanUseCase {
       addOnsRemoved: planChangeResult.addOnsRemoved,
       invoiceTotal: invoice.total,
       amountDue: invoice.amountDue,
+      eventsPublished: events.length,
     });
 
     // ========================================
-    // 9. Return Structured Result
+    // 10. Return Structured Result
     // ========================================
 
     return {

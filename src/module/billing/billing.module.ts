@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClsModule } from 'nestjs-cls';
 import { AuthModule } from '@sharedModule/auth/auth.module';
 import { LoggerModule } from '@sharedModule/logger/logger.module';
+import { EventModule } from '@sharedModule/event/event.module';
 
 // Shared infrastructure (only persistence module - NOT a feature module)
 import { BillingPersistenceModule } from '@billingModule/shared/persistence/billing-persistence.module';
@@ -76,6 +77,7 @@ import { TaxCalculationSummaryRepository } from '@billingModule/tax/persistence/
     BillingSharedModule,
     AuthModule,
     LoggerModule,
+    EventModule,
   ],
   providers: [
     // Public API
