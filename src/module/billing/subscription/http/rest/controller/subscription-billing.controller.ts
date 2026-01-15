@@ -14,6 +14,7 @@ import { plainToInstance } from 'class-transformer';
 import { SubscriptionBillingService } from '@billingModule/subscription/core/service/subscription-billing.service';
 import { SubscriptionPlanChangeService } from '@billingModule/subscription/core/service/subscription-plan-change.service';
 import { AddOnManagerService } from '@billingModule/subscription/core/service/add-on-manager.service';
+import { ChangePlanUseCase } from '@billingModule/subscription/core/use-case/change-plan.use-case';
 import { ChangePlanRequestDto } from '@billingModule/subscription/http/rest/dto/request/change-plan-request.dto';
 import { AddSubscriptionAddOnRequestDto } from '@billingModule/subscription/http/rest/dto/request/add-subscription-add-on-request.dto';
 import { RemoveAddOnRequestDto } from '@billingModule/subscription/http/rest/dto/request/remove-add-on-request.dto';
@@ -25,6 +26,13 @@ import {
 import { SubscriptionAddOnResponseDto } from '@billingModule/subscription/http/rest/dto/response/add-on-response.dto';
 import { RemoveAddOnResponseDto } from '@billingModule/subscription/http/rest/dto/response/remove-add-on-response.dto';
 
+/**
+ * Feature flag for switching between implementations
+ *
+ * TODO: Move to configuration service
+ */
+const USE_NEW_IMPLEMENTATION = process.env.USE_CHANGE_PLAN_USE_CASE === 'true';
+
 @Controller('subscription')
 @UseGuards(AuthGuard)
 export class SubscriptionBillingController {
@@ -32,6 +40,7 @@ export class SubscriptionBillingController {
     private readonly subscriptionBillingService: SubscriptionBillingService,
     private readonly subscriptionPlanChangeService: SubscriptionPlanChangeService,
     private readonly addOnManagerService: AddOnManagerService,
+    private readonly changePlanUseCase: ChangePlanUseCase, // 🆕 Use Case
   ) {}
 
   /**
@@ -131,6 +140,12 @@ export class SubscriptionBillingController {
    * This endpoint maintains backward compatibility by waiting for
    * the invoice to be generated before returning.
    *
+   * Supports dual implementation:
+   * - NEW: ChangePlanUseCase (Rich Domain Model)
+   * - OLD: SubscriptionBillingService (Transaction Script)
+   *
+   * Toggle via environment variable: USE_CHANGE_PLAN_USE_CASE=true
+   *
    * @param subscriptionId - Subscription ID
    * @param dto - Change plan request
    * @returns Complete result including invoice
@@ -144,37 +159,37 @@ export class SubscriptionBillingController {
     // TODO: Get userId from request context/auth token
     const userId = dto.userId || 'current-user-id';
 
-    // Use the old synchronous method for backward compatibility
-    const result = await this.subscriptionBillingService.changePlanForUser(
-      userId,
-      subscriptionId,
-      dto.newPlanId,
-      {
+    if (USE_NEW_IMPLEMENTATION) {
+      // ✅ NEW: Use Case (Rich Domain Model)
+      const result = await this.changePlanUseCase.execute({
+        userId,
+        subscriptionId,
+        newPlanId: dto.newPlanId,
         effectiveDate: dto.effectiveDate
           ? new Date(dto.effectiveDate)
           : undefined,
         chargeImmediately: dto.chargeImmediately ?? true,
         keepAddOns: dto.keepAddOns ?? false,
-      },
-    );
+      });
 
-    return plainToInstance(
-      ChangePlanResponseDto,
-      {
-        subscriptionId: result.subscription.id,
-        oldPlanId: result.oldPlanId,
-        newPlanId: result.newPlanId,
-        prorationCredit: result.prorationCredit,
-        prorationCharge: result.prorationCharge,
-        invoiceId: result.invoice.id,
-        amountDue: result.immediateCharge,
-        nextBillingDate: result.nextBillingDate,
-        addOnsRemoved: result.addOnsRemoved,
-      },
-      {
-        excludeExtraneousValues: true,
-      },
-    );
+      return ChangePlanResponseDto.fromUseCaseResult(result);
+    } else {
+      // ✅ OLD: Transaction Script (legacy)
+      const result = await this.subscriptionBillingService.changePlanForUser(
+        userId,
+        subscriptionId,
+        dto.newPlanId,
+        {
+          effectiveDate: dto.effectiveDate
+            ? new Date(dto.effectiveDate)
+            : undefined,
+          chargeImmediately: dto.chargeImmediately ?? true,
+          keepAddOns: dto.keepAddOns ?? false,
+        },
+      );
+
+      return ChangePlanResponseDto.fromServiceResult(result);
+    }
   }
 
   @Post(':id/add-ons')

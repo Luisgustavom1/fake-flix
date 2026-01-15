@@ -18,6 +18,7 @@ import { SubscriptionBillingService } from '@billingModule/subscription/core/ser
 import { SubscriptionPlanChangeService } from '@billingModule/subscription/core/service/subscription-plan-change.service';
 import { AddOnManagerService } from '@billingModule/subscription/core/service/add-on-manager.service';
 import { ProrationCalculatorService } from '@billingModule/subscription/core/service/proration-calculator.service';
+import { ChangePlanUseCase } from '@billingModule/subscription/core/use-case/change-plan.use-case';
 import { PlanRepository } from '@billingModule/subscription/persistence/repository/plan.repository';
 import { AddOnRepository } from '@billingModule/subscription/persistence/repository/add-on.repository';
 import { SubscriptionRepository } from '@billingModule/subscription/persistence/repository/subscription.repository';
@@ -89,6 +90,7 @@ import { TaxCalculationSummaryRepository } from '@billingModule/tax/persistence/
     SubscriptionPlanChangeService,
     AddOnManagerService,
     ProrationCalculatorService,
+    ChangePlanUseCase,
     PlanRepository,
     AddOnRepository,
     SubscriptionRepository,

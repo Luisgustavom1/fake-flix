@@ -128,7 +128,8 @@
             }
           ]
         },
-        { "name": "{kebab-case}.use-case.ts" }
+        { "name": "{kebab-case}.use-case.ts" },
+        { "name": "{kebab-case}.types.ts" }
       ]
     },
     "queue_folder": {
