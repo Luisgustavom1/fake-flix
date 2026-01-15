@@ -195,7 +195,17 @@
           "name": "event",
           "children": [{ "name": "{kebab-case}.event.ts" }]
         },
-        { "name": "model", "children": [{ "ruleId": "file_name" }] },
+        {
+          "name": "model",
+          "children": [
+            { "ruleId": "file_name" },
+            {
+              "name": "__test__",
+              "children": [{ "name": "{kebab-case}.model.spec.ts" }]
+            },
+            { "name": "{kebab-case}.types.ts" }
+          ]
+        },
         { "name": "service", "children": [{ "ruleId": "file_name" }] },
         { "name": "use-case", "ruleId": "use_case_folder" },
         { "name": "exception", "children": [{ "ruleId": "file_name" }] },
@@ -281,7 +291,17 @@
         { "name": "migration", "children": [{ "name": "*-migration.ts" }] },
         { "name": "{kebab-case}-persistence.module.ts" },
         { "name": "typeorm-datasource.ts" },
-        { "name": "typeorm-datasource.factory.ts" }
+        { "name": "typeorm-datasource.factory.ts" },
+        {
+          "name": "mapper",
+          "children": [
+            { "name": "{kebab-case}.mapper.ts" },
+            {
+              "name": "__test__",
+              "children": [{ "name": "{kebab-case}.mapper.spec.ts" }]
+            }
+          ]
+        }
       ]
     },
     "shared_module_folder": {
