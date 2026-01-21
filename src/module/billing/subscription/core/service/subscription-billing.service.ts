@@ -23,6 +23,18 @@ import { TaxConfiguration } from '@billingModule/tax/core/interface/tax-calculat
 /**
  * SUBSCRIPTION BILLING SERVICE
  *
+ * ⚠️ DEPRECATED - Use Use Cases instead
+ *
+ * This service will be removed in v3.0.
+ *
+ * Migration Guide:
+ * - changePlanForUser() → ChangePlanUseCase
+ * - addAddOn() → AddAddOnUseCase
+ * - removeAddOn() → RemoveAddOnUseCase (via AddOnManagerService)
+ * - cancelSubscription() → CancelSubscriptionUseCase
+ * - activateSubscription() → ActivateSubscriptionUseCase
+ * - generateMonthlyInvoice() → GenerateMonthlyInvoiceUseCase (Phase 6)
+ *
  * Main orchestrator for all subscription billing operations.
  * Inspired by bill-test.service.ts but adapted for streaming subscriptions.
  *
@@ -37,6 +49,8 @@ import { TaxConfiguration } from '@billingModule/tax/core/interface/tax-calculat
  *
  * This service demonstrates production-grade complexity while being
  * educational for course material.
+ *
+ * @deprecated since v2.5 - Use individual Use Cases in core/use-case/
  */
 @Injectable()
 export class SubscriptionBillingService {
@@ -55,6 +69,9 @@ export class SubscriptionBillingService {
 
   /**
    * Change subscription plan with complex proration logic
+   *
+   * @deprecated Use ChangePlanUseCase instead
+   * This method will be removed in v3.0
    *
    * This is the most complex operation, involving:
    * 1. Validate plan change is allowed
@@ -90,6 +107,13 @@ export class SubscriptionBillingService {
     immediateCharge: number;
     nextBillingDate: Date;
   }> {
+    this.appLogger.warn('Using deprecated changePlan method', {
+      userId,
+      newPlanId,
+      message: 'Migrate to ChangePlanUseCase',
+      deprecatedSince: 'v2.5',
+      removedIn: 'v3.0',
+    });
     // Step 1: Load subscription and validate
     const subscription = await this.subscriptionRepository.findOne({
       where: { userId, status: SubscriptionStatus.Active },
@@ -320,6 +344,15 @@ export class SubscriptionBillingService {
     prorationCharge: number;
     addOnsRemoved: number;
   }> {
+    this.appLogger.warn('Using deprecated changePlanForUser method', {
+      userId,
+      subscriptionId,
+      newPlanId,
+      message: 'Migrate to ChangePlanUseCase',
+      deprecatedSince: 'v2.5',
+      removedIn: 'v3.0',
+    });
+
     // Step 1: Load subscription with ownership validation
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: subscriptionId, userId, status: SubscriptionStatus.Active },
@@ -535,6 +568,9 @@ export class SubscriptionBillingService {
   /**
    * Add an add-on to subscription
    *
+   * @deprecated Use AddAddOnUseCase instead
+   * This method will be removed in v3.0
+   *
    * @param subscriptionId - Subscription ID
    * @param addOnId - Add-on ID to add
    * @param options - Options (quantity, effective date)
@@ -551,6 +587,14 @@ export class SubscriptionBillingService {
     subscriptionAddOn: SubscriptionAddOn;
     charge: number;
   }> {
+    this.appLogger.warn('Using deprecated addAddOn method', {
+      subscriptionId,
+      addOnId,
+      message: 'Migrate to AddAddOnUseCase',
+      deprecatedSince: 'v2.5',
+      removedIn: 'v3.0',
+    });
+
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: subscriptionId },
       relations: ['plan', 'addOns'],
@@ -575,12 +619,22 @@ export class SubscriptionBillingService {
   /**
    * Generate monthly invoice for subscription
    *
+   * @deprecated Use GenerateMonthlyInvoiceUseCase instead (Phase 6)
+   * This method will be removed in v3.0
+   *
    * Called at the end of each billing period to consolidate all charges.
    *
    * @param subscriptionId - Subscription ID
    * @returns Generated invoice
    */
   async generateMonthlyInvoice(subscriptionId: string): Promise<Invoice> {
+    this.appLogger.warn('Using deprecated generateMonthlyInvoice method', {
+      subscriptionId,
+      message: 'Migrate to GenerateMonthlyInvoiceUseCase (Phase 6)',
+      deprecatedSince: 'v2.5',
+      removedIn: 'v3.0',
+    });
+
     const subscription = await this.subscriptionRepository.findOne({
       where: { id: subscriptionId },
       relations: [

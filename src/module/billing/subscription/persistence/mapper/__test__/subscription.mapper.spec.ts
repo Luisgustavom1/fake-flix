@@ -323,7 +323,10 @@ describe('SubscriptionMapper', () => {
       expect(existingEntity.autoRenew).toBe(false);
       expect(existingEntity.canceledAt).toEqual(new Date('2026-01-15'));
       expect(existingEntity.cancelAtPeriodEnd).toBe(true);
-      expect(existingEntity.billingAddress?.addressLine1).toBe('456 New St');
+      expect(existingEntity.billingAddress).toBeDefined();
+      expect((existingEntity.billingAddress as any)?.addressLine1).toBe(
+        '456 New St',
+      );
       expect(existingEntity.taxRegionId).toBe('region-2');
       expect(existingEntity.metadata).toEqual({ updated: true });
       expect(existingEntity.updatedAt).toEqual(new Date('2026-01-15'));

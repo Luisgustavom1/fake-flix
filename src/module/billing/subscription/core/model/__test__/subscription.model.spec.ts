@@ -640,19 +640,21 @@ describe('Subscription Domain Model', () => {
     });
   });
 
-  describe('future behaviors (stubs)', () => {
-    let subscription: Subscription;
+  // ========================================
+  // Phase 5: Additional Domain Behaviors
+  // ========================================
 
-    beforeEach(() => {
-      subscription = Subscription.reconstitute({
-        id: 'sub-123',
-        userId: 'user-456',
+  describe('activate()', () => {
+    it('should activate an inactive subscription', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
         planId: 'plan-basic',
-        status: SubscriptionStatus.Active,
-        startDate: new Date(),
+        status: SubscriptionStatus.Inactive,
+        startDate: new Date('2026-01-01'),
         endDate: null,
-        currentPeriodStart: new Date(),
-        currentPeriodEnd: new Date(),
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
         autoRenew: true,
         canceledAt: null,
         cancelAtPeriodEnd: false,
@@ -660,31 +662,436 @@ describe('Subscription Domain Model', () => {
         billingAddress: null,
         taxRegionId: null,
         metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      subscription.activate();
+
+      expect(subscription.getStatus()).toBe(SubscriptionStatus.Active);
+      expect(subscription.getEvents()).toHaveLength(1);
+      expect(subscription.getEvents()[0]).toMatchObject({
+        eventType: 'SubscriptionActivated',
+        aggregateId: 'test-subscription-id',
+        userId: 'test-user-id',
       });
     });
 
-    it('activate() should throw not implemented', () => {
+    it('should throw error if subscription is already active', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
       expect(() => subscription.activate()).toThrow(
-        'Not implemented yet - Phase 5',
+        'Subscription is already active',
       );
     });
+  });
 
-    it('cancel() should throw not implemented', () => {
+  describe('cancel()', () => {
+    it('should cancel an active subscription with reason', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      const reason = 'User requested cancellation';
+      subscription.cancel(reason);
+
+      expect(subscription.getStatus()).toBe(SubscriptionStatus.Inactive);
+      expect(subscription.getCanceledAt()).toBeDefined();
+      expect(subscription.getEvents()).toHaveLength(1);
+      expect(subscription.getEvents()[0]).toMatchObject({
+        eventType: 'SubscriptionCancelled',
+        aggregateId: 'test-subscription-id',
+        userId: 'test-user-id',
+        reason,
+      });
+    });
+
+    it('should cancel with default reason if not provided', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      subscription.cancel();
+
+      expect(subscription.getStatus()).toBe(SubscriptionStatus.Inactive);
+      expect(subscription.getEvents()[0]).toMatchObject({
+        reason: 'User requested',
+      });
+    });
+
+    it('should throw error if subscription is not active', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Inactive,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
       expect(() => subscription.cancel()).toThrow(
-        'Not implemented yet - Phase 5',
+        'Can only cancel active subscriptions',
+      );
+    });
+  });
+
+  describe('addAddOn()', () => {
+    it('should add an add-on to active subscription', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      subscription.addAddOn('addon-123', 2);
+
+      expect(subscription.getEvents()).toHaveLength(1);
+      expect(subscription.getEvents()[0]).toMatchObject({
+        eventType: 'AddOnAdded',
+        aggregateId: 'test-subscription-id',
+        addOnId: 'addon-123',
+        quantity: 2,
+      });
+    });
+
+    it('should throw error if subscription is not active', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Inactive,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      expect(() => subscription.addAddOn('addon-123', 1)).toThrow(
+        'Can only add add-ons to active subscriptions',
       );
     });
 
-    it('addAddOn() should throw not implemented', () => {
-      expect(() => subscription.addAddOn()).toThrow(
-        'Not implemented yet - Phase 5',
+    it('should throw error if quantity is zero or negative', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      expect(() => subscription.addAddOn('addon-123', 0)).toThrow(
+        'Quantity must be positive',
+      );
+      expect(() => subscription.addAddOn('addon-123', -1)).toThrow(
+        'Quantity must be positive',
       );
     });
 
-    it('removeAddOn() should throw not implemented', () => {
-      expect(() => subscription.removeAddOn()).toThrow(
-        'Not implemented yet - Phase 5',
+    it('should throw error if add-on already exists', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [{ addOnId: 'addon-123' } as any],
+        discounts: [],
+      });
+
+      expect(() => subscription.addAddOn('addon-123', 1)).toThrow(
+        'Add-on already present',
       );
+    });
+  });
+
+  describe('removeAddOn()', () => {
+    it('should remove an add-on from active subscription', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [{ addOnId: 'addon-123' } as any],
+        discounts: [],
+      });
+
+      subscription.removeAddOn('addon-123');
+
+      expect(subscription.getAddOns()).toHaveLength(0);
+      expect(subscription.getEvents()).toHaveLength(1);
+      expect(subscription.getEvents()[0]).toMatchObject({
+        eventType: 'AddOnRemoved',
+        aggregateId: 'test-subscription-id',
+        addOnId: 'addon-123',
+      });
+    });
+
+    it('should throw error if subscription is not active', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Inactive,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [{ addOnId: 'addon-123' } as any],
+        discounts: [],
+      });
+
+      expect(() => subscription.removeAddOn('addon-123')).toThrow(
+        'Can only remove add-ons from active subscriptions',
+      );
+    });
+
+    it('should throw error if add-on not found', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      expect(() => subscription.removeAddOn('addon-999')).toThrow(
+        'Add-on not found',
+      );
+    });
+  });
+
+  describe('Future behaviors (Phase 6+)', () => {
+    it('activate() should activate subscription', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Inactive,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      expect(() => subscription.activate()).not.toThrow();
+    });
+
+    it('cancel() should cancel subscription', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      expect(() => subscription.cancel()).not.toThrow();
+    });
+
+    it('addAddOn() should add add-on', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [],
+        discounts: [],
+      });
+
+      expect(() => subscription.addAddOn('addon-123', 1)).not.toThrow();
+    });
+
+    it('removeAddOn() should remove add-on', () => {
+      const subscription = Subscription.reconstitute({
+        id: 'test-subscription-id',
+        userId: 'test-user-id',
+        planId: 'plan-basic',
+        status: SubscriptionStatus.Active,
+        startDate: new Date('2026-01-01'),
+        endDate: null,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-02-01'),
+        autoRenew: true,
+        canceledAt: null,
+        cancelAtPeriodEnd: false,
+        trialEndsAt: null,
+        billingAddress: null,
+        taxRegionId: null,
+        metadata: null,
+        addOns: [{ addOnId: 'addon-123' } as any],
+        discounts: [],
+      });
+
+      expect(() => subscription.removeAddOn('addon-123')).not.toThrow();
     });
   });
 });

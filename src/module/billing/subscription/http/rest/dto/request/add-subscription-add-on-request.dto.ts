@@ -11,6 +11,10 @@ export class AddSubscriptionAddOnRequestDto {
   addOnId: string;
 
   @IsOptional()
+  @IsUUID(4)
+  userId?: string;
+
+  @IsOptional()
   @IsNumber()
   @Min(1)
   quantity?: number;

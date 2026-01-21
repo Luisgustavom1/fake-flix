@@ -28,6 +28,10 @@ import {
 import { DomainEvent } from '../../../../shared/core/event/domain-event.interface';
 import { SubscriptionPlanChangedEvent } from '../event/subscription-plan-changed.event';
 import { AddOnsRemovedEvent } from '../event/add-ons-removed.event';
+import { SubscriptionActivatedEvent } from '../event/subscription-activated.event';
+import { SubscriptionCancelledEvent } from '../event/subscription-cancelled.event';
+import { AddOnAddedEvent } from '../event/add-on-added.event';
+import { AddOnRemovedEvent } from '../event/add-on-removed.event';
 
 export class Subscription {
   // Identity (immutable)
@@ -439,34 +443,128 @@ export class Subscription {
   }
 
   // ========================================
-  // FUTURE DOMAIN BEHAVIORS (Stubs)
+  // ADDITIONAL DOMAIN BEHAVIORS
   // ========================================
 
   /**
-   * TODO: Implement in Phase 5
+   * Activate subscription
+   *
+   * Business Rules:
+   * - Cannot activate already active subscription
+   * - Sets status to Active
+   * - Updates timestamp
+   * - Publishes SubscriptionActivatedEvent
+   *
+   * @throws {DomainError} If subscription is already active
    */
   activate(): void {
-    throw new Error('Not implemented yet - Phase 5');
+    if (this.status === SubscriptionStatus.Active) {
+      throw new DomainError('Subscription is already active');
+    }
+
+    this.status = SubscriptionStatus.Active;
+    this.updatedAt = new Date();
+
+    // Publish domain event
+    this.addEvent(new SubscriptionActivatedEvent(this.id, this.userId));
   }
 
   /**
-   * TODO: Implement in Phase 5
+   * Cancel subscription
+   *
+   * Business Rules:
+   * - Can only cancel active subscriptions
+   * - Sets status to Inactive
+   * - Records cancellation timestamp
+   * - Publishes SubscriptionCancelledEvent with reason
+   *
+   * @param reason - Optional reason for cancellation (defaults to 'User requested')
+   * @throws {DomainError} If subscription is not active
    */
-  cancel(): void {
-    throw new Error('Not implemented yet - Phase 5');
+  cancel(reason?: string): void {
+    if (!this.isActive()) {
+      throw new DomainError('Can only cancel active subscriptions');
+    }
+
+    this.status = SubscriptionStatus.Inactive;
+    this.canceledAt = new Date();
+    this.updatedAt = new Date();
+
+    // Publish domain event
+    this.addEvent(
+      new SubscriptionCancelledEvent(
+        this.id,
+        this.userId,
+        reason || 'User requested',
+      ),
+    );
   }
 
   /**
-   * TODO: Implement in Phase 5
+   * Add add-on to subscription
+   *
+   * Business Rules:
+   * - Can only add add-ons to active subscriptions
+   * - Quantity must be positive
+   * - Cannot add duplicate add-on (use update instead)
+   * - Publishes AddOnAddedEvent
+   *
+   * @param addOnId - ID of the add-on to add
+   * @param quantity - Quantity of add-on (must be positive)
+   * @throws {DomainError} If subscription is not active, quantity is invalid, or add-on already exists
    */
-  addAddOn(): void {
-    throw new Error('Not implemented yet - Phase 5');
+  addAddOn(addOnId: string, quantity: number): void {
+    if (!this.isActive()) {
+      throw new DomainError('Can only add add-ons to active subscriptions');
+    }
+
+    if (quantity <= 0) {
+      throw new DomainError('Quantity must be positive');
+    }
+
+    // Check if already has this add-on
+    const existing = this.addOns.find((a: any) => a.addOnId === addOnId);
+    if (existing) {
+      throw new DomainError('Add-on already present. Use update instead.');
+    }
+
+    // Note: Actual SubscriptionAddOn entity will be created by repository/mapper
+    // Domain model just tracks the intent
+    this.updatedAt = new Date();
+
+    // Publish domain event
+    this.addEvent(new AddOnAddedEvent(this.id, addOnId, quantity));
   }
 
   /**
-   * TODO: Implement in Phase 5
+   * Remove add-on from subscription
+   *
+   * Business Rules:
+   * - Can only remove add-ons from active subscriptions
+   * - Add-on must exist on subscription
+   * - Updates internal collection
+   * - Publishes AddOnRemovedEvent
+   *
+   * @param addOnId - ID of the add-on to remove
+   * @throws {DomainError} If subscription is not active or add-on not found
    */
-  removeAddOn(): void {
-    throw new Error('Not implemented yet - Phase 5');
+  removeAddOn(addOnId: string): void {
+    if (!this.isActive()) {
+      throw new DomainError(
+        'Can only remove add-ons from active subscriptions',
+      );
+    }
+
+    const index = this.addOns.findIndex((a: any) => a.addOnId === addOnId);
+    if (index === -1) {
+      throw new DomainError('Add-on not found');
+    }
+
+    // Remove from collection
+    this.addOns.splice(index, 1);
+    this.updatedAt = new Date();
+
+    // Publish domain event
+    this.addEvent(new AddOnRemovedEvent(this.id, addOnId));
   }
 }
