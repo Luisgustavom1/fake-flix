@@ -15,7 +15,6 @@ import { BillingPublicApiProvider } from '@billingModule/integration/provider/pu
 
 // Subscription feature
 import { SubscriptionService } from '@billingModule/subscription/core/service/subscription.service';
-import { SubscriptionBillingService } from '@billingModule/subscription/core/service/subscription-billing.service';
 import { SubscriptionPlanChangeService } from '@billingModule/subscription/core/service/subscription-plan-change.service';
 import { AddOnManagerService } from '@billingModule/subscription/core/service/add-on-manager.service';
 import { ProrationCalculatorService } from '@billingModule/subscription/core/service/proration-calculator.service';
@@ -93,7 +92,6 @@ import { TaxCalculationSummaryRepository } from '@billingModule/tax/persistence/
 
     // Subscription
     SubscriptionService,
-    SubscriptionBillingService,
     SubscriptionPlanChangeService,
     AddOnManagerService,
     ProrationCalculatorService,

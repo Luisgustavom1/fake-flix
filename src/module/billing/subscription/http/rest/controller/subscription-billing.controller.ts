@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@sharedModule/auth/guard/auth.guard';
 import { plainToInstance } from 'class-transformer';
-import { SubscriptionBillingService } from '@billingModule/subscription/core/service/subscription-billing.service';
 import { SubscriptionPlanChangeService } from '@billingModule/subscription/core/service/subscription-plan-change.service';
 import { ChangePlanUseCase } from '@billingModule/subscription/core/use-case/change-plan.use-case';
 import { AddAddOnUseCase } from '@billingModule/subscription/core/use-case/add-add-on.use-case';
@@ -35,7 +34,6 @@ import { ActivateSubscriptionResponseDto } from '@billingModule/subscription/htt
 @UseGuards(AuthGuard)
 export class SubscriptionBillingController {
   constructor(
-    private readonly subscriptionBillingService: SubscriptionBillingService, // ⚠️ Deprecated - kept for backward compatibility
     private readonly subscriptionPlanChangeService: SubscriptionPlanChangeService,
     private readonly changePlanUseCase: ChangePlanUseCase,
     private readonly addAddOnUseCase: AddAddOnUseCase,
