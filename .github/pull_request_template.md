@@ -1,4 +1,3 @@
-```md
 1. Preparação e Contexto
    Antes de olhar a primeira linha de código, o revisor deve garantir que entende o "porquê" da mudança.
 
@@ -51,4 +50,3 @@ NIT: Sugestão estética ou preferência pessoal (não bloqueante).
 - [ ] ROI do Comentário: Avaliei se o custo de tempo da minha sugestão vale o benefício técnico para o projeto?
 
 - [ ] Aprovação: Se todos os pontos críticos foram resolvidos e o código melhora a saúde geral do sistema, o PR está pronto para aprovação.
-```
