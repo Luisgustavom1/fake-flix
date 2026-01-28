@@ -11,9 +11,12 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@sharedModule/auth/guard/auth.guard';
 import { plainToInstance } from 'class-transformer';
-import { SubscriptionBillingService } from '@billingModule/subscription/core/service/subscription-billing.service';
 import { SubscriptionPlanChangeService } from '@billingModule/subscription/core/service/subscription-plan-change.service';
-import { AddOnManagerService } from '@billingModule/subscription/core/service/add-on-manager.service';
+import { ChangePlanUseCase } from '@billingModule/subscription/core/use-case/change-plan.use-case';
+import { AddAddOnUseCase } from '@billingModule/subscription/core/use-case/add-add-on.use-case';
+import { RemoveAddOnUseCase } from '@billingModule/subscription/core/use-case/remove-add-on.use-case';
+import { CancelSubscriptionUseCase } from '@billingModule/subscription/core/use-case/cancel-subscription.use-case';
+import { ActivateSubscriptionUseCase } from '@billingModule/subscription/core/use-case/activate-subscription.use-case';
 import { ChangePlanRequestDto } from '@billingModule/subscription/http/rest/dto/request/change-plan-request.dto';
 import { AddSubscriptionAddOnRequestDto } from '@billingModule/subscription/http/rest/dto/request/add-subscription-add-on-request.dto';
 import { RemoveAddOnRequestDto } from '@billingModule/subscription/http/rest/dto/request/remove-add-on-request.dto';
@@ -22,16 +25,21 @@ import {
   ChangePlanAsyncResponseDto,
   PlanChangeStatusResponseDto,
 } from '@billingModule/subscription/http/rest/dto/response/change-plan-async-response.dto';
-import { SubscriptionAddOnResponseDto } from '@billingModule/subscription/http/rest/dto/response/add-on-response.dto';
+import { AddAddOnResponseDto } from '@billingModule/subscription/http/rest/dto/response/add-add-on-response.dto';
 import { RemoveAddOnResponseDto } from '@billingModule/subscription/http/rest/dto/response/remove-add-on-response.dto';
+import { CancelSubscriptionResponseDto } from '@billingModule/subscription/http/rest/dto/response/cancel-subscription-response.dto';
+import { ActivateSubscriptionResponseDto } from '@billingModule/subscription/http/rest/dto/response/activate-subscription-response.dto';
 
 @Controller('subscription')
 @UseGuards(AuthGuard)
 export class SubscriptionBillingController {
   constructor(
-    private readonly subscriptionBillingService: SubscriptionBillingService,
     private readonly subscriptionPlanChangeService: SubscriptionPlanChangeService,
-    private readonly addOnManagerService: AddOnManagerService,
+    private readonly changePlanUseCase: ChangePlanUseCase,
+    private readonly addAddOnUseCase: AddAddOnUseCase,
+    private readonly removeAddOnUseCase: RemoveAddOnUseCase,
+    private readonly cancelSubscriptionUseCase: CancelSubscriptionUseCase,
+    private readonly activateSubscriptionUseCase: ActivateSubscriptionUseCase,
   ) {}
 
   /**
@@ -131,6 +139,12 @@ export class SubscriptionBillingController {
    * This endpoint maintains backward compatibility by waiting for
    * the invoice to be generated before returning.
    *
+   * Supports dual implementation:
+   * - NEW: ChangePlanUseCase (Rich Domain Model)
+   * - OLD: SubscriptionBillingService (Transaction Script)
+   *
+   * Uses ChangePlanUseCase (Rich Domain Model) pattern.
+   *
    * @param subscriptionId - Subscription ID
    * @param dto - Change plan request
    * @returns Complete result including invoice
@@ -144,88 +158,128 @@ export class SubscriptionBillingController {
     // TODO: Get userId from request context/auth token
     const userId = dto.userId || 'current-user-id';
 
-    // Use the old synchronous method for backward compatibility
-    const result = await this.subscriptionBillingService.changePlanForUser(
+    const result = await this.changePlanUseCase.execute({
       userId,
       subscriptionId,
-      dto.newPlanId,
-      {
-        effectiveDate: dto.effectiveDate
-          ? new Date(dto.effectiveDate)
-          : undefined,
-        chargeImmediately: dto.chargeImmediately ?? true,
-        keepAddOns: dto.keepAddOns ?? false,
-      },
-    );
+      newPlanId: dto.newPlanId,
+      effectiveDate: dto.effectiveDate
+        ? new Date(dto.effectiveDate)
+        : undefined,
+      chargeImmediately: dto.chargeImmediately ?? true,
+      keepAddOns: dto.keepAddOns ?? false,
+    });
 
-    return plainToInstance(
-      ChangePlanResponseDto,
-      {
-        subscriptionId: result.subscription.id,
-        oldPlanId: result.oldPlanId,
-        newPlanId: result.newPlanId,
-        prorationCredit: result.prorationCredit,
-        prorationCharge: result.prorationCharge,
-        invoiceId: result.invoice.id,
-        amountDue: result.immediateCharge,
-        nextBillingDate: result.nextBillingDate,
-        addOnsRemoved: result.addOnsRemoved,
-      },
-      {
-        excludeExtraneousValues: true,
-      },
-    );
+    return ChangePlanResponseDto.fromUseCaseResult(result);
   }
 
+  /**
+   * Add add-on to subscription
+   *
+   * Uses AddAddOnUseCase (Rich Domain Model) pattern.
+   *
+   * @param subscriptionId - Subscription ID
+   * @param dto - Add add-on request
+   * @returns Add-on details
+   */
   @Post(':id/add-ons')
+  @HttpCode(201)
   async addAddOn(
     @Param('id') subscriptionId: string,
     @Body() dto: AddSubscriptionAddOnRequestDto,
-  ): Promise<SubscriptionAddOnResponseDto> {
-    const result = await this.subscriptionBillingService.addAddOn(
-      subscriptionId,
-      dto.addOnId,
-      {
-        quantity: dto.quantity ?? 1,
-        effectiveDate: dto.effectiveDate
-          ? new Date(dto.effectiveDate)
-          : undefined,
-      },
-    );
+  ): Promise<AddAddOnResponseDto> {
+    // TODO: Get userId from request context/auth token
+    const userId = dto.userId || 'current-user-id';
 
-    return plainToInstance(
-      SubscriptionAddOnResponseDto,
-      {
-        id: result.subscriptionAddOn.id,
-        addOn: result.subscriptionAddOn.addOn,
-        quantity: result.subscriptionAddOn.quantity,
-        prorationCharge: result.charge,
-        startDate: result.subscriptionAddOn.startDate,
-      },
-      {
-        excludeExtraneousValues: true,
-      },
-    );
+    const result = await this.addAddOnUseCase.execute({
+      userId,
+      subscriptionId,
+      addOnId: dto.addOnId,
+      quantity: dto.quantity,
+    });
+
+    return AddAddOnResponseDto.from(result);
   }
 
+  /**
+   * Remove add-on from subscription
+   *
+   * Uses RemoveAddOnUseCase (Rich Domain Model) pattern.
+   *
+   * @param subscriptionId - Subscription ID
+   * @param addOnId - Add-on ID to remove
+   * @param dto - Remove options
+   * @returns Removal confirmation
+   */
   @Delete(':id/add-ons/:addOnId')
+  @HttpCode(200)
   async removeAddOn(
     @Param('id') subscriptionId: string,
     @Param('addOnId') addOnId: string,
     @Body() dto: RemoveAddOnRequestDto,
   ): Promise<RemoveAddOnResponseDto> {
-    const result = await this.addOnManagerService.removeAddOnByIds(
+    // TODO: Get userId from request context/auth token
+    const userId = dto.userId || 'current-user-id';
+
+    const result = await this.removeAddOnUseCase.execute({
+      userId,
       subscriptionId,
       addOnId,
-      {
-        effectiveDate: dto.effectiveDate
-          ? new Date(dto.effectiveDate)
-          : undefined,
-      },
-    );
+    });
 
     return plainToInstance(RemoveAddOnResponseDto, result, {
       excludeExtraneousValues: true,
     });
+  }
+
+  /**
+   * Cancel subscription
+   *
+   * Uses CancelSubscriptionUseCase (Rich Domain Model) pattern.
+   *
+   * @param subscriptionId - Subscription ID
+   * @param dto - Cancellation options
+   * @returns Cancellation confirmation
+   */
+  @Delete(':id')
+  @HttpCode(200)
+  async cancelSubscription(
+    @Param('id') subscriptionId: string,
+    @Body() dto: { userId?: string; reason?: string },
+  ): Promise<CancelSubscriptionResponseDto> {
+    // TODO: Get userId from request context/auth token
+    const userId = dto.userId || 'current-user-id';
+
+    const result = await this.cancelSubscriptionUseCase.execute({
+      userId,
+      subscriptionId,
+      reason: dto.reason,
+    });
+
+    return CancelSubscriptionResponseDto.from(result);
+  }
+
+  /**
+   * Activate subscription
+   *
+   * Uses ActivateSubscriptionUseCase (Rich Domain Model) pattern.
+   *
+   * @param subscriptionId - Subscription ID
+   * @returns Activation confirmation
+   */
+  @Post(':id/activate')
+  @HttpCode(200)
+  async activateSubscription(
+    @Param('id') subscriptionId: string,
+    @Body() dto: { userId?: string },
+  ): Promise<ActivateSubscriptionResponseDto> {
+    // TODO: Get userId from request context/auth token
+    const userId = dto.userId || 'current-user-id';
+
+    const result = await this.activateSubscriptionUseCase.execute({
+      userId,
+      subscriptionId,
+    });
+
+    return ActivateSubscriptionResponseDto.from(result);
   }
 }

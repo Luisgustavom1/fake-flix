@@ -1,6 +1,6 @@
 ---
 description: 'Describe what this custom agent does and when to use it.'
-tools: ['read', 'edit', 'search', 'context7/*', 'agent', 'todo']
+tools: ['execute', 'read', 'edit', 'search', 'context7/*', 'agent', 'todo']
 ---
 
 # Fakeflix Architecture Principles

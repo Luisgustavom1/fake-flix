@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClsModule } from 'nestjs-cls';
 import { AuthModule } from '@sharedModule/auth/auth.module';
 import { LoggerModule } from '@sharedModule/logger/logger.module';
+import { EventModule } from '@sharedModule/event/event.module';
 
 // Shared infrastructure (only persistence module - NOT a feature module)
 import { BillingPersistenceModule } from '@billingModule/shared/persistence/billing-persistence.module';
@@ -14,10 +15,14 @@ import { BillingPublicApiProvider } from '@billingModule/integration/provider/pu
 
 // Subscription feature
 import { SubscriptionService } from '@billingModule/subscription/core/service/subscription.service';
-import { SubscriptionBillingService } from '@billingModule/subscription/core/service/subscription-billing.service';
 import { SubscriptionPlanChangeService } from '@billingModule/subscription/core/service/subscription-plan-change.service';
 import { AddOnManagerService } from '@billingModule/subscription/core/service/add-on-manager.service';
 import { ProrationCalculatorService } from '@billingModule/subscription/core/service/proration-calculator.service';
+import { ChangePlanUseCase } from '@billingModule/subscription/core/use-case/change-plan.use-case';
+import { AddAddOnUseCase } from '@billingModule/subscription/core/use-case/add-add-on.use-case';
+import { RemoveAddOnUseCase } from '@billingModule/subscription/core/use-case/remove-add-on.use-case';
+import { CancelSubscriptionUseCase } from '@billingModule/subscription/core/use-case/cancel-subscription.use-case';
+import { ActivateSubscriptionUseCase } from '@billingModule/subscription/core/use-case/activate-subscription.use-case';
 import { PlanRepository } from '@billingModule/subscription/persistence/repository/plan.repository';
 import { AddOnRepository } from '@billingModule/subscription/persistence/repository/add-on.repository';
 import { SubscriptionRepository } from '@billingModule/subscription/persistence/repository/subscription.repository';
@@ -31,6 +36,7 @@ import { SubscriptionBillingController } from '@billingModule/subscription/http/
 // Invoice feature
 import { InvoiceService } from '@billingModule/invoice/core/service/invoice.service';
 import { InvoiceGeneratorService } from '@billingModule/invoice/core/service/invoice-generator.service';
+import { InvoiceBuilder } from '@billingModule/invoice/core/service/invoice-builder.service';
 import { PlanChangeInvoiceGeneratorService } from '@billingModule/invoice/core/service/plan-change-invoice-generator.service';
 import { ChargeRepository } from '@billingModule/invoice/persistence/repository/charge.repository';
 import { PaymentRepository } from '@billingModule/invoice/persistence/repository/payment.repository';
@@ -74,6 +80,7 @@ import { TaxCalculationSummaryRepository } from '@billingModule/tax/persistence/
     BillingSharedModule,
     AuthModule,
     LoggerModule,
+    EventModule,
   ],
   providers: [
     // Public API
@@ -85,10 +92,14 @@ import { TaxCalculationSummaryRepository } from '@billingModule/tax/persistence/
 
     // Subscription
     SubscriptionService,
-    SubscriptionBillingService,
     SubscriptionPlanChangeService,
     AddOnManagerService,
     ProrationCalculatorService,
+    ChangePlanUseCase,
+    AddAddOnUseCase,
+    RemoveAddOnUseCase,
+    CancelSubscriptionUseCase,
+    ActivateSubscriptionUseCase,
     PlanRepository,
     AddOnRepository,
     SubscriptionRepository,
@@ -100,6 +111,7 @@ import { TaxCalculationSummaryRepository } from '@billingModule/tax/persistence/
     // Invoice
     InvoiceService,
     InvoiceGeneratorService,
+    InvoiceBuilder,
     PlanChangeInvoiceGeneratorService,
     PlanChangeInvoiceQueueConsumer,
     ChargeRepository,

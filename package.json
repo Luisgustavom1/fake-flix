@@ -121,6 +121,15 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "@contentModule/(.*)$": "<rootDir>/module/content/$1",
+      "@identityModule/(.*)$": "<rootDir>/module/identity/$1",
+      "@sharedModule/(.*)$": "<rootDir>/module/shared/module/$1",
+      "@sharedLibs/(.*)$": "<rootDir>/module/shared/$1",
+      "@billingModule/(.*)$": "<rootDir>/module/billing/$1",
+      "@src/(.*)$": "<rootDir>/$1",
+      "@testInfra/(.*)$": "<rootDir>/../test/$1"
+    }
   }
 }
