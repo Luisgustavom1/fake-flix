@@ -15,6 +15,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { ChangePlanUseCase } from '../src/module/billing/subscription/core/use-case/change-plan.use-case';
 import { performance } from 'perf_hooks';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 // ============================================================================
 // Configuration
@@ -271,13 +272,16 @@ async function main(): Promise<void> {
   );
   console.log('\n');
 
+  // Initialize transactional context before creating app
+  initializeTransactionalContext();
+
   let app;
   const allMetrics: BenchmarkMetrics[] = [];
 
   try {
     console.log('🚀 Initializing application context...\n');
     app = await NestFactory.createApplicationContext(AppModule, {
-      logger: false, // Disable logging for cleaner benchmark output
+      logger: ['error', 'warn'], // Enable error/warn logging to debug issues
     });
 
     console.log('✅ Application context initialized\n');
@@ -314,7 +318,12 @@ async function main(): Promise<void> {
     const allPassed = allMetrics.every((m) => m.slasMet.p95 && m.slasMet.p99);
     process.exit(allPassed ? 0 : 1);
   } catch (error) {
-    console.error('\n❌ \x1b[31mBenchmark failed:\x1b[0m', error);
+    console.error('\n❌ \x1b[31mBenchmark failed:\x1b[0m');
+    console.error('Error details:', error);
+    if (error instanceof Error) {
+      console.error('Message:', error.message);
+      console.error('Stack:', error.stack);
+    }
     process.exit(1);
   } finally {
     if (app) {
