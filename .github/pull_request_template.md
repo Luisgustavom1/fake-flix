@@ -2,22 +2,16 @@
    Antes de olhar a primeira linha de código, o revisor deve garantir que entende o "porquê" da mudança.
 
 - [ ] Entendimento do Negócio: Eu entendo o problema de negócio que esta mudança tenta resolver?
-
 - [ ] Alinhamento de Requisitos: Verifiquei se a solução atende a todos os requisitos e critérios de aceite da task?
-
 - [ ] Contexto Arquitetural: Entendo como essa mudança se encaixa na arquitetura atual do sistema?
 
 2. Os 5 Pilares Técnicos (Padrão Google)
    O foco principal deve ser a qualidade e a sustentabilidade, não apenas a correção momentânea.
 
 - [ ] Design: O design geral é sólido? As interações entre as peças fazem sentido e seguem os princípios SOLID?
-
 - [ ] Funcionalidade: O código faz o que se propõe? Considerei cenários de borda (edge cases) e possíveis condições de corrida (race conditions)?
-
 - [ ] Complexidade: O código é fácil de entender? Existe algum sinal de over-engineering ou abstrações desnecessárias que podem ser simplificadas?
-
 - [ ] Testes: Foram adicionados testes unitários, de integração ou E2E? Os testes são úteis, fáceis de manter e realmente falham se o código for quebrado?
-
 - [ ] Nomenclatura: Nomes de variáveis, classes e métodos são descritivos e seguem as convenções do projeto?
 
 3. Segurança e Performance
